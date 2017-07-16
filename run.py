@@ -1,8 +1,8 @@
-from app import create_app
+from app import ChaosWG
 from models import init_database, create_tables, insert_testdata
 
 if __name__ == '__main__':
-    app = create_app()
+    app = ChaosWG(__name__)
 
     db = init_database(app)
     create_tables(db)

@@ -76,11 +76,12 @@ class Task(BaseModel):
     task = CharField(unique=True)
     base_points = SmallIntegerField()
     time_factor = FloatField(default=0.0)
-    state = SmallIntegerField(index=True, default=0, constraints=([Check('state >= 0'), Check('state <= 2')]))
+    state = SmallIntegerField(index=True, default=0)
     BACKLOG = 0
     TODO = 1
     DONE = 2
     room = ForeignKeyField(Room, null=True)
+    todo_time = DateTimeField(null=True)
     last_done = DateTimeField(null=True)
 
     @property
@@ -90,8 +91,8 @@ class Task(BaseModel):
         :return:
         """
         now = datetime.utcnow()
-        # set last_time to now if last_done is not set.
-        last_time = now if not self.last_done else self.last_done
+        # set last_time to now if todo_time is not set.
+        last_time = now if not self.todo_time else self.todo_time
         real_points = self.base_points + (self.time_factor * (now - last_time).days)
         return int(real_points)
 
@@ -102,30 +103,31 @@ class Task(BaseModel):
         work with it
         :return:
         """
-        return list(cls.select())
-
-    # @staticmethod
-    # def get_tasks(state):
-    #    return list(Task.select().where(Task.state == state).dicts())
+        return list(cls.select().order_by(cls.base_points.desc()))
 
     @staticmethod
     def set_state(id, state, user_id):
         # TODO with db.atomic
         # update task state and time
         task = Task.get(Task.id == id)
-        task.state = state
-        points_obtained = 0
-        if state == Task.DONE:
-            points_obtained = task.points
-            task.last_done = datetime.utcnow()
-        task.save()
+        # do not update if state doesn't change
+        if task.state != state:
+            now = datetime.utcnow()
+            task.state = state
+            points_obtained = 0
+            if state == Task.DONE:
+                points_obtained = task.points
+                task.last_done = now
+            elif state == Task.TODO:
+                task.todo_time = now
+            task.save()
 
-        # update user points if new state is DONE
-        if points_obtained > 0:
-            User.update(points=User.points + points_obtained).where(User.id == user_id).execute()
+            # update user points if new state is DONE (user got points)
+            if points_obtained > 0:
+                User.update(points=User.points + points_obtained, last_update=now).where(User.id == user_id).execute()
 
-            # add to history
-            History.create(task=task.id, user=user_id, points=points_obtained)
+                # add to history
+                History.create(task=task.id, user=user_id, points=points_obtained, time=now)
 
 
 class History(BaseModel):

@@ -2,23 +2,24 @@
 {% block title %}ChaosWG Manager - Tasks{% endblock %}
 
 {% block content %}
-<div class="container" style="margin-top:50px">
+<div class="container">
     <div class="row">
         <div class="col-sm-4">
             <h2>Backlog</h2>
-            <table class="table table-bordered table-hover table-responsive">
+            <table class="table table-hover table-responsive">
                 <thead>
                 <tr>
                     <th>Task</th>
-                    <th>(base) Points</th>
+                    <th>Points</th>
                     <th>Last done</th>
                 </tr>
                 </thead>
                 <tbody>
                 {% for task in backlog %}
-                <tr>
+                <tr data-toggle="popover" title="{{task.task}} <a href='#' class='close' data-dismiss='alert'>×</a>"
+                    data-taskid="{{task.id}}">
                     <td>{{task.task}}</td>
-                    <td>({{task.base_points}}) <strong>{{task.points}}</strong></td>
+                    <td>{{task.base_points}}</td>
                     <td>{{task.last_done|datetime}}</td>
                 </tr>
                 {% endfor %}
@@ -28,19 +29,24 @@
 
         <div class="col-sm-4">
             <h2>ToDo</h2>
-            <table class="table table-bordered table-hover table-responsive">
+            <table class="table table-hover table-responsive">
                 <thead>
                 <tr>
                     <th>Task</th>
-                    <th>(base) Points</th>
+                    <th>Points (base)</th>
                     <th>Last done</th>
                 </tr>
                 </thead>
                 <tbody>
                 {% for task in todo %}
-                <tr>
+                <tr data-toggle="popover" title="{{task.task}} <a href='#' class='close' data-dismiss='alert'>×</a>"
+                    {% if task.points - task.base_points>= 2 %}
+                    class="danger"
+                    {% elif task.points - task.base_points >= 1 %}
+                    class="warning"{% endif %}
+                    data-taskid="{{task.id}}">
                     <td>{{task.task}}</td>
-                    <td>({{task.base_points}}) <strong>{{task.points}}</strong></td>
+                    <td><strong>{{task.points}}</strong> ({{task.base_points}})</td>
                     <td>{{task.last_done|datetime}}</td>
                 </tr>
                 {% endfor %}
@@ -51,19 +57,20 @@
 
         <div class="col-sm-4">
             <h2>Done</h2>
-            <table class="table table-bordered table-hover table-responsive">
+            <table class="table table-hover table-responsive">
                 <thead>
                 <tr>
                     <th>Task</th>
-                    <th>(base) Points</th>
+                    <th>Points</th>
                     <th>Last done</th>
                 </tr>
                 </thead>
                 <tbody>
                 {% for task in done %}
-                <tr>
+                <tr data-toggle="popover" title="{{task.task}} <a href='#' class='close' data-dismiss='alert'>×</a>"
+                    data-taskid="{{task.id}}">
                     <td>{{task.task}}</td>
-                    <td>({{task.base_points}}) <strong>{{task.points}}</strong></td>
+                    <td>{{task.base_points}}</td>
                     <td>{{task.last_done|datetime}}</td>
                 </tr>
                 {% endfor %}
@@ -72,5 +79,31 @@
             </table>
         </div>
     </div>
+
+    <hr/>
+
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="progress">
+                <div class="progress-bar progress-bar-warning" role="progressbar"
+                     style="width:{{progress['backlog']}}%">
+                    {{progress['backlog']|int}}% Backlog
+                </div>
+                <div class="progress-bar progress-bar-danger" role="progressbar" style="width:{{progress['todo']}}%">
+                    {{progress['todo']|int}}% ToDo
+                </div>
+                <div class="progress-bar progress-bar-success" role="progressbar" style="width:{{progress['done']}}%">
+                    {{progress['done']|int}}% Done
+                </div>
+            </div>
+
+            <button type="button" class="btn btn-default">Create Task</button>
+        </div>
+    </div>
 </div>
+{% endblock %}
+
+{% block scripts %}
+{{super()}}
+<script src="{{url_for('.static', filename='js/tasks.js')}}"></script>
 {% endblock %}

@@ -1,6 +1,11 @@
 {% extends "bootstrap/base.html" %}
 {% block title %}ChaosWG Manager{% endblock %}
 
+{% block styles %}
+{{super()}}
+<link rel="stylesheet" href="{{url_for('.static', filename='css/style.css')}}">
+{% endblock %}
+
 {% block navbar %}
 <nav class="navbar navbar-inverse navbar-fixed-top">
     <div class="container-fluid">
@@ -16,7 +21,17 @@
             <ul class="nav navbar-nav">
                 <li><a href="/get_tasks"><span class="glyphicon glyphicon-check"></span> Tasks</a></li>
                 <li><a href="/get_users"><span class="glyphicon glyphicon-user"></span> Users</a></li>
-                <li><a href="/get_user_history/Obi"><span class="glyphicon glyphicon-time"></span> History</a></li>
+                <li class="dropdown">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true"
+                       aria-expanded="false"><span class="glyphicon glyphicon-time"></span> History <span
+                            class="caret"></span></a>
+                    <ul class="dropdown-menu">
+                        <li class="dropdown-header">Select a user</li>
+                        {% for u in users %}
+                        <li><a href="/get_user_history/{{u.username}}">{{u.username}}</a></li>
+                        {% endfor %}
+                    </ul>
+                </li>
             </ul>
             <ul class="nav navbar-nav navbar-right">
                 <li><a href="#"><span class="glyphicon glyphicon-user"></span> Sign Up</a></li>

@@ -1,0 +1,80 @@
+{% extends "bootstrap/base.html" %}
+{% block title %}This is an example page{% endblock %}
+
+{% block navbar %}
+<div class="navbar navbar-fixed-top">
+    <!-- ... -->
+</div>
+{% endblock %}
+
+{% block content %}
+    <div class="row">
+        <div class="col-sm-4">
+            <h1>Backlog</h1>
+            <table class="table table-striped table-responsive">
+                <thead>
+                    <tr>
+                        <th>Task</th>
+                        <th>(base) Points</th>
+                        <th>Last done</th>
+                    </tr>
+                </thead>
+                <tbody>
+                {% for task in backlog %}
+                    <tr>
+                        <td>{{task.task}}</td>
+                        <td>({{task.base_points}}) <strong>{{task.points}}</strong></td>
+                        <td>{{task.last_done}}</td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <div class="col-sm-4">
+            <h1>ToDo</h1>
+            <table class="table table-striped table-responsive">
+                <thead>
+                    <tr>
+                        <th>Task</th>
+                        <th>(base) Points</th>
+                        <th>Last done</th>
+                    </tr>
+                </thead>
+                <tbody>
+                {% for task in todo %}
+                    <tr>
+                        <td>{{task.task}}</td>
+                        <td>({{task.base_points}}) <strong>{{task.points}}</strong></td>
+                        <td>{{task.last_done}}</td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+
+            </table>
+        </div>
+
+        <div class="col-sm-4">
+            <h1>Done</h1>
+            <table class="table table-striped table-responsive">
+                <thead>
+                    <tr>
+                        <th>Task</th>
+                        <th>(base) Points</th>
+                        <th>Last done</th>
+                    </tr>
+                </thead>
+                <tbody>
+                {% for task in done %}
+                    <tr>
+                        <td>{{task.task}}</td>
+                        <td>({{task.base_points}}) <strong>{{task.points}}</strong></td>
+                        <td>{{task.last_done}}</td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+
+            </table>
+        </div>
+    </div>
+{% endblock %}

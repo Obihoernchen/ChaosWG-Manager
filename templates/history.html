@@ -1,0 +1,30 @@
+{% extends "bootstrap/base.html" %}
+{% block title %}This is an example page{% endblock %}
+
+{% block navbar %}
+<div class="navbar navbar-fixed-top">
+    <!-- ... -->
+</div>
+{% endblock %}
+
+{% block content %}
+<h1>History of {{ username }}</h1>
+<table class="table table-striped table-responsive">
+    <thead>
+    <tr>
+        <th>Time</th>
+        <th>Task</th>
+        <th>Points</th>
+    </tr>
+    </thead>
+    <tbody>
+    {% for i in userhist %}
+    <tr>
+        <td>{{i.time}}</td>
+        <td>{{i.task}}</td>
+        <td>{{i.points}}</td>
+    </tr>
+    {% endfor %}
+    </tbody>
+</table>
+{% endblock %}

@@ -1,0 +1,4 @@
+- show timedelta to now instead of date?
+- navbar activate (darker button) active page
+- color gradient based on timedelta
+- proper timezone support

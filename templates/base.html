@@ -1,0 +1,28 @@
+{% extends "bootstrap/base.html" %}
+{% block title %}ChaosWG Manager{% endblock %}
+
+{% block navbar %}
+<nav class="navbar navbar-inverse navbar-fixed-top">
+    <div class="container-fluid">
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navBar">
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="/">ChaosWG Manager</a>
+        </div>
+        <div class="collapse navbar-collapse" id="navBar">
+            <ul class="nav navbar-nav">
+                <li><a href="/get_tasks"><span class="glyphicon glyphicon-check"></span> Tasks</a></li>
+                <li><a href="/get_users"><span class="glyphicon glyphicon-user"></span> Users</a></li>
+                <li><a href="/get_user_history/Obi"><span class="glyphicon glyphicon-time"></span> History</a></li>
+            </ul>
+            <ul class="nav navbar-nav navbar-right">
+                <li><a href="#"><span class="glyphicon glyphicon-user"></span> Sign Up</a></li>
+                <li><a href="#"><span class="glyphicon glyphicon-log-in"></span> Login</a></li>
+            </ul>
+        </div>
+    </div>
+</nav>
+{% endblock %}

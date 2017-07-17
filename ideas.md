@@ -1,4 +1,4 @@
-- set task state in UI
+- use AJAX so we don't have to reload the whole page (single page with dynamic content)
 
 - show timedelta to now instead of date?
 - navbar activate (darker button) active page: <li class="active">
@@ -10,4 +10,4 @@
 - add/delete task button
 - optimize the users=User.get_all() on all templates (cache it or something).
 
-- taskhistory aus history ziehen
+- get task history from history table for each task and show in details (who did the task and when)

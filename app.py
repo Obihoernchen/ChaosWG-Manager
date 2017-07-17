@@ -27,6 +27,9 @@ class ChaosWG(Flask):
         # Enable babel support
         self.babel = Babel(self, default_timezone='Europe/Berlin')
 
+        # set datetime filter for jinja2
+        self.jinja_env.filters['datetime'] = format_datetime_custom
+
         # Routes
         self.route('/')(self.index)
         self.route('/get_users')(self.get_users)
@@ -34,9 +37,6 @@ class ChaosWG(Flask):
         self.route('/set_task_state', methods=['POST'])(self.set_task_state)
         self.route('/get_user_history/<username>')(self.get_history)
         self.route('/create_task', methods=['POST'])(self.create_task)
-
-        # set datetime filter for jinja2
-        self.jinja_env.filters['datetime'] = format_datetime_custom
 
     def index(self):
         return render_template('index.html', users=User.get_all())

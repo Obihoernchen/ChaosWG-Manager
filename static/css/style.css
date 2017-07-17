@@ -6,3 +6,7 @@ body {
     position: relative;
     bottom: 3px;
 }
+
+.table-hover>tbody>tr:hover {
+    cursor: pointer;
+}

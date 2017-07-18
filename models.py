@@ -1,6 +1,7 @@
 from datetime import datetime
 from peewee import *
 from playhouse.flask_utils import FlaskDB
+from werkzeug.security import generate_password_hash, check_password_hash
 
 DATABASE = 'chaoswg.sqlite'
 
@@ -22,11 +23,12 @@ def create_tables(db):
 
 def insert_testdata(db):
     with db.atomic():
-        User.get_or_create(username='User1')
-        User.get_or_create(username='User2')
-        User.get_or_create(username='User3')
-        User.get_or_create(username='User4')
-        User.get_or_create(username='User5')
+        pwhash = generate_password_hash('123456')
+        User.get_or_create(username='User1', password=pwhash)
+        User.get_or_create(username='User2', password=pwhash)
+        User.get_or_create(username='User3', password=pwhash)
+        User.get_or_create(username='User4', password=pwhash)
+        User.get_or_create(username='User5', password=pwhash)
 
         Room.get_or_create(room='Bibliothek')
         Room.get_or_create(room='Flur')
@@ -36,36 +38,73 @@ def insert_testdata(db):
         Room.get_or_create(room='Abstellzimmer')
         Room.get_or_create(room='Dachterasse')
 
-        Task.get_or_create(task='Kühlschrankcheck', base_points=2, state=Task.BACKLOG)
-        Task.get_or_create(task='Grünabfall', base_points=1, state=Task.BACKLOG)
-        Task.get_or_create(task='Fenster putzen', base_points=3, state=Task.BACKLOG)
-        Task.get_or_create(task='Ofen reinigen', base_points=5, state=Task.BACKLOG)
-        Task.get_or_create(task='Tiefkühler enteisen', base_points=8, state=Task.BACKLOG)
-        Task.get_or_create(task='Saugen + Wischen', base_points=13, state=Task.TODO)
-        Task.get_or_create(task='Holzstuhl entsorgen', base_points=2, state=Task.TODO)
-        Task.get_or_create(task='großes Bad', base_points=8, state=Task.TODO)
-        Task.get_or_create(task='kleines Bad', base_points=3, state=Task.DONE)
-        Task.get_or_create(task='Rasen mähen + harken', base_points=13, state=Task.TODO)
-        Task.get_or_create(task='Küche putzen', base_points=3, state=Task.DONE)
-        Task.get_or_create(task='Abwaschen', base_points=2, state=Task.DONE)
-        Task.get_or_create(task='Einkaufen', base_points=3, state=Task.DONE)
-        Task.get_or_create(task='Pappe entsorgen', base_points=2, state=Task.DONE)
-        Task.get_or_create(task='Müll entsorgen', base_points=1, state=Task.DONE)
-        Task.get_or_create(task='Glas wegbringen', base_points=2, state=Task.DONE)
-        Task.get_or_create(task='GS ausräumen', base_points=2, state=Task.DONE)
+        Task.get_or_create(task='Kühlschrankcheck', base_points=2, time_factor=0.5, state=Task.BACKLOG)
+        Task.get_or_create(task='Grünabfall', base_points=1, time_factor=0.5, state=Task.BACKLOG)
+        Task.get_or_create(task='Fenster putzen', base_points=3, time_factor=0.5, state=Task.BACKLOG)
+        Task.get_or_create(task='Ofen reinigen', base_points=5, time_factor=0.5, state=Task.BACKLOG)
+        Task.get_or_create(task='Tiefkühler enteisen', base_points=8, time_factor=0.5, state=Task.BACKLOG)
+        Task.get_or_create(task='Saugen + Wischen', base_points=13, time_factor=0.5, state=Task.TODO)
+        Task.get_or_create(task='Holzstuhl entsorgen', base_points=2, time_factor=0.5, state=Task.TODO)
+        Task.get_or_create(task='großes Bad', base_points=8, time_factor=0.5, state=Task.TODO)
+        Task.get_or_create(task='kleines Bad', base_points=3, time_factor=0.5, state=Task.DONE)
+        Task.get_or_create(task='Rasen mähen + harken', base_points=13, time_factor=0.5, state=Task.TODO)
+        Task.get_or_create(task='Küche putzen', base_points=3, time_factor=0.5, state=Task.DONE)
+        Task.get_or_create(task='Abwaschen', base_points=2, time_factor=0.5, state=Task.DONE)
+        Task.get_or_create(task='Einkaufen', base_points=3, time_factor=0.5, state=Task.DONE)
+        Task.get_or_create(task='Pappe entsorgen', base_points=2, time_factor=0.5, state=Task.DONE)
+        Task.get_or_create(task='Müll entsorgen', base_points=1, time_factor=0.5, state=Task.DONE)
+        Task.get_or_create(task='Glas wegbringen', base_points=2, time_factor=0.5, state=Task.DONE)
+        Task.get_or_create(task='GS ausräumen', base_points=2, time_factor=0.5, state=Task.DONE)
 
 
 class BaseModel(flaskDb.Model):
     @classmethod
     def get_all(cls):
-        # return [m for m in cls.select().dicts()]
         return list(cls.select().dicts())
 
 
 class User(BaseModel):
     username = CharField(unique=True)
+    password = CharField()
     points = IntegerField(default=0)
     last_update = DateTimeField(default=datetime.utcnow)
+
+    @classmethod
+    def get_all(cls):
+        """
+        without password
+        :return:
+        """
+        return list(cls.select(cls.username, cls.points, cls.last_update).dicts())
+
+    @classmethod
+    def get_by_name(cls, username):
+        try:
+            return cls.get(cls.username == username)
+        except DoesNotExist:
+            return False
+
+    def set_password(self, password):
+        self.password = generate_password_hash(password)
+
+    def check_password(self, password):
+        return check_password_hash(self.password, password)
+
+    # Flask-Login required functions
+    @property
+    def is_active(self):
+        return True
+
+    @property
+    def is_authenticated(self):
+        return True
+
+    @property
+    def is_anonymous(self):
+        return False
+
+    def get_id(self):
+        return self.id
 
 
 class Room(flaskDb.Model):
@@ -105,20 +144,20 @@ class Task(BaseModel):
         """
         return list(cls.select().order_by(cls.base_points.desc()))
 
-    @staticmethod
-    def set_state(id, state, user_id):
+    @classmethod
+    def set_state(cls, id, state, user_id):
         # TODO with db.atomic
         # update task state and time
-        task = Task.get(Task.id == id)
+        task = cls.get(cls.id == id)
         # do not update if state doesn't change
         if task.state != state:
             now = datetime.utcnow()
             task.state = state
             points_obtained = 0
-            if state == Task.DONE:
+            if state == cls.DONE:
                 points_obtained = task.points
                 task.last_done = now
-            elif state == Task.TODO:
+            elif state == cls.TODO:
                 task.todo_time = now
             task.save()
 
@@ -136,10 +175,10 @@ class History(BaseModel):
     points = SmallIntegerField()
     time = DateTimeField(default=datetime.utcnow())
 
-    @staticmethod
-    def get_user_history(user):
+    @classmethod
+    def get_user_history(cls, user):
         return list(
-            History.select(History.time, Task.task, History.points)
-                .join(User, on=(History.user == User.id))
-                .join(Task, on=(History.task == Task.id))
+            cls.select(cls.time, Task.task, cls.points)
+                .join(User, on=(cls.user == User.id))
+                .join(Task, on=(cls.task == Task.id))
                 .where(User.username == user).dicts())

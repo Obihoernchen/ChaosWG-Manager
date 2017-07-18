@@ -1,8 +1,12 @@
-from flask import Flask, render_template, request
+from flask import Flask, render_template, request, redirect, abort
 from flask_bootstrap import Bootstrap, WebCDN
 from flask_babel import Babel, format_datetime
+from flask_login import LoginManager, login_user, logout_user, login_required, current_user
 # from flask_restful import Resource, Api
 from models import *
+from forms import *
+
+login_manager = LoginManager()
 
 
 def format_datetime_custom(value):
@@ -30,8 +34,13 @@ class ChaosWG(Flask):
         # set datetime filter for jinja2
         self.jinja_env.filters['datetime'] = format_datetime_custom
 
+        # init LoginManager
+        login_manager.init_app(self)
+
         # Routes
         self.route('/')(self.index)
+        self.route('/login', methods=['GET', 'POST'])(self.login)
+        self.route('/logout')(self.logout)
         self.route('/get_users')(self.get_users)
         self.route('/get_tasks')(self.get_tasks)
         self.route('/set_task_state', methods=['POST'])(self.set_task_state)
@@ -39,19 +48,47 @@ class ChaosWG(Flask):
         self.route('/create_task', methods=['POST'])(self.create_task)
 
     def index(self):
-        return render_template('index.html', users=User.get_all())
+        return render_template('index.html')
 
+    def login(self):
+        form = LoginForm()
+
+        if form.validate_on_submit():
+            user = User.get_by_name(form.name.data)
+            if user and user.check_password(form.password.data):
+                login_user(user, remember=True)
+                return redirect('/get_tasks')
+
+        return render_template('login.html', form=form)
+
+    @login_manager.user_loader
+    def load_user(user_id):
+        return User.get(User.id == user_id)
+
+    @login_manager.unauthorized_handler
+    def unauthorized(self):
+        return redirect('/login')
+
+    @login_required
+    def logout(self):
+        logout_user()
+        return redirect('/')
+
+    @login_required
     def get_users(self):
         return render_template('users.html', users=User.get_all())
 
+    @login_required
     def get_history(self, username):
         return render_template('history.html', userhist=History.get_user_history(username), username=username,
                                users=User.get_all())
 
+    @login_required
     def create_task(self):
         bla = request.form.get('bla')
         return 'TODO'
 
+    @login_required
     def get_tasks(self):
         tasks = Task.get_all()
         backlog = [t for t in tasks if t.state == Task.BACKLOG]
@@ -67,9 +104,10 @@ class ChaosWG(Flask):
         return render_template('tasks.html', backlog=backlog, todo=todo, done=done, progress=progress,
                                users=User.get_all())
 
+    @login_required
     def set_task_state(self):
         # TODO proper use user session variable
-        user_id = 1
+        user_id = current_user.get_id()
         task_id = request.form.get('id', type=int)
         state = request.form.get('state', type=int)
         if None not in (task_id, state, user_id) and state in (0, 1, 2):

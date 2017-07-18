@@ -18,6 +18,7 @@
             <a class="navbar-brand" href="/">ChaosWG Manager</a>
         </div>
         <div class="collapse navbar-collapse" id="navBar">
+            {% if current_user.is_authenticated %}
             <ul class="nav navbar-nav">
                 <li><a href="/get_tasks"><span class="glyphicon glyphicon-check"></span> Tasks</a></li>
                 <li><a href="/get_users"><span class="glyphicon glyphicon-user"></span> Users</a></li>
@@ -33,9 +34,14 @@
                     </ul>
                 </li>
             </ul>
+            {% endif %}
             <ul class="nav navbar-nav navbar-right">
-                <li><a href="#"><span class="glyphicon glyphicon-user"></span> Sign Up</a></li>
-                <li><a href="#"><span class="glyphicon glyphicon-log-in"></span> Login</a></li>
+                {% if not current_user.is_authenticated %}
+                <li><a href="/login"><span class="glyphicon glyphicon-log-in"></span> Login</a></li>
+                {% else %}
+                <li><a href="/logout"><span class="glyphicon glyphicon-log-out"></span> Logout {{current_user.username}}</a>
+                </li>
+                {% endif %}
             </ul>
         </div>
     </div>

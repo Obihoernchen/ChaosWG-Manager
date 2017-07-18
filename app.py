@@ -48,7 +48,7 @@ class ChaosWG(Flask):
         self.route('/create_task', methods=['POST'])(self.create_task)
 
     def index(self):
-        return render_template('index.html')
+        return render_template('index.html', users=User.get_all())
 
     def login(self):
         form = LoginForm()

@@ -10,7 +10,8 @@ function process_btn_press(element, state) {
     location.reload();
 }
 
-$(document).ready(function(){
+// ready not needed because it's loaded at the end of body
+//$(document).ready(function(){
     // Init popovers
     var popovers = $('[data-toggle="popover"]');
     popovers.popover({
@@ -39,4 +40,4 @@ $(document).ready(function(){
     $(document).on('click', '.btn-done', function(){
         process_btn_press($(this), 2);
     });
-});
+//});

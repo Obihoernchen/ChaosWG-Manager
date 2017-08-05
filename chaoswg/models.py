@@ -1,34 +1,32 @@
 from datetime import datetime
-from peewee import *
+
+from peewee import (CharField, IntegerField, DateTimeField, SmallIntegerField, ForeignKeyField,
+                    FloatField, DoesNotExist)
 from playhouse.flask_utils import FlaskDB
 from werkzeug.security import generate_password_hash, check_password_hash
 
-DATABASE = 'chaoswg.sqlite'
-
-flaskDb = FlaskDB()
+db_wrapper = FlaskDB()
 
 
 def init_database(app):
-    db = SqliteDatabase(DATABASE)
-    app.config['DATABASE'] = db
-    flaskDb.init_app(app)
-    return db
+    db_wrapper.init_app(app)
+    return db_wrapper.database
 
 
-def create_tables(db):
-    db.connect()
-    db.create_tables([User, Room, Task, History], safe=True)
-    db.close()
+def create_tables():
+    db_wrapper.database.connect()
+    db_wrapper.database.create_tables([User, Room, Task, History], safe=True)
+    db_wrapper.database.close()
 
 
-def insert_testdata(db):
+def insert_testdata():
     pwhash = generate_password_hash('123456')
-    with db.atomic():
-        User.get_or_create(username='User1', password=pwhash)
-        User.get_or_create(username='User2', password=pwhash)
-        User.get_or_create(username='User3', password=pwhash)
-        User.get_or_create(username='User4', password=pwhash)
-        User.get_or_create(username='User5', password=pwhash)
+    with db_wrapper.database.atomic():
+        User.get_or_create(username='User1', defaults={'password': pwhash})
+        User.get_or_create(username='User2', defaults={'password': pwhash})
+        User.get_or_create(username='User3', defaults={'password': pwhash})
+        User.get_or_create(username='User4', defaults={'password': pwhash})
+        User.get_or_create(username='User5', defaults={'password': pwhash})
 
         Room.get_or_create(room='Bibliothek')
         Room.get_or_create(room='Flur')
@@ -38,26 +36,43 @@ def insert_testdata(db):
         Room.get_or_create(room='Abstellzimmer')
         Room.get_or_create(room='Dachterrasse')
 
-        Task.get_or_create(task='Kühlschrankcheck', base_points=2, time_factor=0.5, state=Task.BACKLOG)
-        Task.get_or_create(task='Grünabfall', base_points=1, time_factor=0.5, state=Task.BACKLOG)
-        Task.get_or_create(task='Fenster putzen', base_points=3, time_factor=0.5, state=Task.BACKLOG)
-        Task.get_or_create(task='Ofen reinigen', base_points=5, time_factor=0.5, state=Task.BACKLOG)
-        Task.get_or_create(task='Tiefkühler enteisen', base_points=8, time_factor=0.5, state=Task.BACKLOG)
-        Task.get_or_create(task='Saugen + Wischen', base_points=13, time_factor=0.5, state=Task.TODO)
-        Task.get_or_create(task='Holzstuhl entsorgen', base_points=2, time_factor=0.5, state=Task.TODO)
-        Task.get_or_create(task='großes Bad', base_points=8, time_factor=0.5, state=Task.TODO)
-        Task.get_or_create(task='kleines Bad', base_points=3, time_factor=0.5, state=Task.DONE)
-        Task.get_or_create(task='Rasen mähen + harken', base_points=13, time_factor=0.5, state=Task.TODO)
-        Task.get_or_create(task='Küche putzen', base_points=2, time_factor=0.5, state=Task.DONE)
-        Task.get_or_create(task='Abwaschen', base_points=2, time_factor=0.5, state=Task.DONE)
-        Task.get_or_create(task='Einkaufen', base_points=3, time_factor=0.5, state=Task.DONE)
-        Task.get_or_create(task='Pappe entsorgen', base_points=2, time_factor=0.5, state=Task.DONE)
-        Task.get_or_create(task='Müll entsorgen', base_points=1, time_factor=0.5, state=Task.DONE)
-        Task.get_or_create(task='Glas wegbringen', base_points=2, time_factor=0.5, state=Task.DONE)
-        Task.get_or_create(task='GS ausräumen', base_points=2, time_factor=0.5, state=Task.DONE)
+        Task.get_or_create(task='Kühlschrankcheck',
+                           defaults={'base_points': 2, 'time_factor': 0.5, 'state': Task.BACKLOG})
+        Task.get_or_create(task='Grünabfall',
+                           defaults={'base_points': 1, 'time_factor': 0.5, 'state': Task.BACKLOG})
+        Task.get_or_create(task='Fenster putzen',
+                           defaults={'base_points': 3, 'time_factor': 0.5, 'state': Task.BACKLOG})
+        Task.get_or_create(task='Ofen reinigen',
+                           defaults={'base_points': 5, 'time_factor': 0.5, 'state': Task.BACKLOG})
+        Task.get_or_create(task='Tiefkühler enteisen',
+                           defaults={'base_points': 8, 'time_factor': 0.5, 'state': Task.BACKLOG})
+        Task.get_or_create(task='Saugen + Wischen',
+                           defaults={'base_points': 13, 'time_factor': 0.5, 'state': Task.TODO})
+        Task.get_or_create(task='Holzstuhl entsorgen',
+                           defaults={'base_points': 2, 'time_factor': 0.5, 'state': Task.TODO})
+        Task.get_or_create(task='großes Bad',
+                           defaults={'base_points': 8, 'time_factor': 0.5, 'state': Task.TODO})
+        Task.get_or_create(task='kleines Bad',
+                           defaults={'base_points': 3, 'time_factor': 0.5, 'state': Task.DONE})
+        Task.get_or_create(task='Rasen mähen + harken',
+                           defaults={'base_points': 13, 'time_factor': 0.5, 'state': Task.TODO})
+        Task.get_or_create(task='Küche putzen',
+                           defaults={'base_points': 2, 'time_factor': 0.5, 'state': Task.DONE})
+        Task.get_or_create(task='Abwaschen',
+                           defaults={'base_points': 2, 'time_factor': 0.5, 'state': Task.DONE})
+        Task.get_or_create(task='Einkaufen',
+                           defaults={'base_points': 3, 'time_factor': 0.5, 'state': Task.DONE})
+        Task.get_or_create(task='Pappe entsorgen',
+                           defaults={'base_points': 2, 'time_factor': 0.5, 'state': Task.DONE})
+        Task.get_or_create(task='Müll entsorgen',
+                           defaults={'base_points': 1, 'time_factor': 0.5, 'state': Task.DONE})
+        Task.get_or_create(task='Glas wegbringen',
+                           defaults={'base_points': 2, 'time_factor': 0.5, 'state': Task.DONE})
+        Task.get_or_create(task='GS ausräumen',
+                           defaults={'base_points': 2, 'time_factor': 0.5, 'state': Task.DONE})
 
 
-class BaseModel(flaskDb.Model):
+class BaseModel(db_wrapper.Model):
     @classmethod
     def get_all(cls):
         return list(cls.select().dicts())
@@ -106,8 +121,12 @@ class User(BaseModel):
     def get_id(self):
         return self.id
 
+    # Required for administrative interface
+    def __unicode__(self):
+        return self.username
 
-class Room(flaskDb.Model):
+
+class Room(db_wrapper.Model):
     room = CharField(unique=True)
 
 
@@ -146,7 +165,7 @@ class Task(BaseModel):
 
     @classmethod
     def set_state(cls, id, state, user_id):
-        # TODO with db.atomic
+        # TODO db.atomic?
         # update task state and time
         task = cls.get(cls.id == id)
         # do not update if state doesn't change
@@ -163,7 +182,8 @@ class Task(BaseModel):
 
             # update user points if new state is DONE (user got points)
             if points_obtained > 0:
-                User.update(points=User.points + points_obtained, last_update=now).where(User.id == user_id).execute()
+                User.update(points=User.points + points_obtained, last_update=now).where(
+                    User.id == user_id).execute()
 
                 # add to history
                 History.create(task=task.id, user=user_id, points=points_obtained, time=now)

@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% set active_page = "users" %}
 {% block title %}ChaosWG Manager - Users{% endblock %}
 
 {% block content %}
@@ -19,12 +20,26 @@
                 <tr>
                     <td>{{u.username}}</td>
                     <td>{{u.points}}</td>
-                    <td>{{u.last_update|datetime}}</td>
+                    <td>{{u.last_update|timedelta}}</td>
                 </tr>
                 {% endfor %}
                 </tbody>
             </table>
         </div>
     </div>
+
+    <hr/>
+
+    <div class="row">
+        <div class="col-sm-12">
+            <canvas id="userChart"></canvas>
+        </div>
+    </div>
 </div>
+{% endblock %}
+
+{% block scripts %}
+{{super()}}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.4.0/Chart.min.js"></script>
+<script src="{{url_for('.static', filename='js/users.js')}}"></script>
 {% endblock %}

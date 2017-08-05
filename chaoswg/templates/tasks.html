@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% set active_page = "tasks" %}
 {% block title %}ChaosWG Manager - Tasks{% endblock %}
 
 {% block content %}
@@ -20,7 +21,7 @@
                     data-taskid="{{task.id}}">
                     <td>{{task.task}}</td>
                     <td>{{task.base_points}}</td>
-                    <td>{{task.last_done|datetime}}</td>
+                    <td>{{task.last_done|timedelta}}</td>
                 </tr>
                 {% endfor %}
                 </tbody>
@@ -49,7 +50,7 @@
                     <td><strong>{{task.points}}</strong> {% if task.points != task.base_points
                         %}({{task.base_points}}){% endif %}
                     </td>
-                    <td>{{task.last_done|datetime}}</td>
+                    <td>{{task.last_done|timedelta}}</td>
                 </tr>
                 {% endfor %}
                 </tbody>
@@ -73,7 +74,7 @@
                     data-taskid="{{task.id}}">
                     <td>{{task.task}}</td>
                     <td>{{task.base_points}}</td>
-                    <td>{{task.last_done|datetime}}</td>
+                    <td>{{task.last_done|timedelta}}</td>
                 </tr>
                 {% endfor %}
                 </tbody>
@@ -99,9 +100,7 @@
                 </div>
             </div>
 
-            <a href="create_task" class="btn btn-default" role="button">
-                Create Task
-            </a>
+            <a href="create_task" class="btn btn-default" role="button">Create Task</a>
         </div>
     </div>
 </div>

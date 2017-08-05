@@ -14,7 +14,7 @@ $.getJSON('/json/users', function(result) {
             labels: users,
             datasets: [{
                 label: "Points",
-                backgroundColor: 'rgba(51, 122, 183, 0.75)',
+                backgroundColor: 'rgba(51, 122, 183, 0.7)',
                 borderColor: 'rgba(51, 122, 183, 1)',
                 borderWidth: 1,
                 data: points,

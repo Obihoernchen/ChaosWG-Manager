@@ -46,7 +46,9 @@
                     class="warning"{% endif %}
                     data-taskid="{{task.id}}">
                     <td>{{task.task}}</td>
-                    <td><strong>{{task.points}}</strong> ({{task.base_points}})</td>
+                    <td><strong>{{task.points}}</strong> {% if task.points != task.base_points
+                        %}({{task.base_points}}){% endif %}
+                    </td>
                     <td>{{task.last_done|datetime}}</td>
                 </tr>
                 {% endfor %}
@@ -97,7 +99,9 @@
                 </div>
             </div>
 
-            <button type="button" class="btn btn-default">Create Task</button>
+            <a href="create_task" class="btn btn-default" role="button">
+                Create Task
+            </a>
         </div>
     </div>
 </div>

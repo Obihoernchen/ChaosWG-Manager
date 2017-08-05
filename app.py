@@ -1,7 +1,9 @@
-from flask import Flask, render_template, request, redirect, abort
+from flask import Flask, render_template, request, redirect, url_for, abort
 from flask_bootstrap import Bootstrap, WebCDN
 from flask_babel import Babel, format_datetime
 from flask_login import LoginManager, login_user, logout_user, login_required, current_user
+# from flask_admin import Admin, AdminIndexView, expose
+from flask_admin.contrib.peewee import ModelView
 # from flask_restful import Resource, Api
 from models import *
 from forms import *
@@ -37,6 +39,12 @@ class ChaosWG(Flask):
         # init LoginManager
         login_manager.init_app(self)
 
+        # init flask admin
+        # self.admin = Admin(self, index_view=MyAdminIndexView(), name='ChaosWG Admin', template_mode='bootstrap3')
+        # self.admin.add_view(MyModelView(Task))
+        # self.admin.add_view(MyModelView(User))
+        # self.admin.add_view(MyModelView(Room))
+
         # Routes
         self.route('/')(self.index)
         self.route('/login', methods=['GET', 'POST'])(self.login)
@@ -45,7 +53,8 @@ class ChaosWG(Flask):
         self.route('/get_tasks')(self.get_tasks)
         self.route('/set_task_state', methods=['POST'])(self.set_task_state)
         self.route('/get_user_history/<username>')(self.get_history)
-        self.route('/create_task', methods=['POST'])(self.create_task)
+        # TODO check methods
+        self.route('/create_task', methods=['GET', 'POST'])(self.create_task)
 
     def index(self):
         return render_template('index.html', users=User.get_all())
@@ -85,8 +94,19 @@ class ChaosWG(Flask):
 
     @login_required
     def create_task(self):
-        bla = request.form.get('bla')
-        return 'TODO'
+        form = CreateTaskForm()
+
+        if form.validate_on_submit():
+            task, created = Task.get_or_create(task=form.task.data, base_points=form.base_points.data,
+                                               time_factor=form.time_factor.data)
+            if not created:
+                # TODO return error message, task exists
+                return '', 403
+            else:
+                # TODO return success message
+                return redirect('/get_tasks')
+
+        return render_template('create_task.html', form=form)
 
     @login_required
     def get_tasks(self):
@@ -113,6 +133,6 @@ class ChaosWG(Flask):
         if None not in (task_id, state, user_id) and state in (0, 1, 2):
             Task.set_state(task_id, state, user_id)
         else:
-            pass
-        # TODO else and proper return code
-        return 'OK'
+            # TODO message
+            return '', 403
+        return '', 204

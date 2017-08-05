@@ -22,8 +22,8 @@ def create_tables(db):
 
 
 def insert_testdata(db):
+    pwhash = generate_password_hash('123456')
     with db.atomic():
-        pwhash = generate_password_hash('123456')
         User.get_or_create(username='User1', password=pwhash)
         User.get_or_create(username='User2', password=pwhash)
         User.get_or_create(username='User3', password=pwhash)
@@ -36,7 +36,7 @@ def insert_testdata(db):
         Room.get_or_create(room='großes Bad')
         Room.get_or_create(room='kleines Bad')
         Room.get_or_create(room='Abstellzimmer')
-        Room.get_or_create(room='Dachterasse')
+        Room.get_or_create(room='Dachterrasse')
 
         Task.get_or_create(task='Kühlschrankcheck', base_points=2, time_factor=0.5, state=Task.BACKLOG)
         Task.get_or_create(task='Grünabfall', base_points=1, time_factor=0.5, state=Task.BACKLOG)
@@ -48,7 +48,7 @@ def insert_testdata(db):
         Task.get_or_create(task='großes Bad', base_points=8, time_factor=0.5, state=Task.TODO)
         Task.get_or_create(task='kleines Bad', base_points=3, time_factor=0.5, state=Task.DONE)
         Task.get_or_create(task='Rasen mähen + harken', base_points=13, time_factor=0.5, state=Task.TODO)
-        Task.get_or_create(task='Küche putzen', base_points=3, time_factor=0.5, state=Task.DONE)
+        Task.get_or_create(task='Küche putzen', base_points=2, time_factor=0.5, state=Task.DONE)
         Task.get_or_create(task='Abwaschen', base_points=2, time_factor=0.5, state=Task.DONE)
         Task.get_or_create(task='Einkaufen', base_points=3, time_factor=0.5, state=Task.DONE)
         Task.get_or_create(task='Pappe entsorgen', base_points=2, time_factor=0.5, state=Task.DONE)

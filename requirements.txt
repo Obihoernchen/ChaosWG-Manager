@@ -3,5 +3,8 @@ flask_bootstrap
 Flask-babel
 flask-login
 flask-wtf
+flask-admin
+wtf-peewee
+
 peewee
-#flask-restful
+wtf-peewee

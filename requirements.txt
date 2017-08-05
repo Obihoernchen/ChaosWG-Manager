@@ -4,7 +4,6 @@ Flask-babel
 flask-login
 flask-wtf
 flask-admin
-wtf-peewee
 
 peewee
 wtf-peewee

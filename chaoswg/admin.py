@@ -5,7 +5,7 @@ from flask_admin.contrib.peewee import ModelView
 from flask_admin.form import SecureForm
 from flask_login import current_user
 
-from chaoswg.models import User, Task, Room
+from chaoswg.models import User, Task, Room, History
 
 
 # Custom flask-admin classes for authentication
@@ -40,3 +40,4 @@ def init_admin(app):
     admin.add_view(AuthAdminModelView(Task))
     admin.add_view(AuthAdminUserModelView(User))
     admin.add_view(AuthAdminModelView(Room))
+    admin.add_view(AuthAdminModelView(History))

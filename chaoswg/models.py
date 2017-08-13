@@ -1,7 +1,7 @@
 from datetime import datetime
 
 from peewee import (CharField, IntegerField, DateTimeField, SmallIntegerField, ForeignKeyField,
-                    FloatField, BooleanField, DoesNotExist)
+                    FloatField, DoesNotExist)
 from playhouse.flask_utils import FlaskDB
 from werkzeug.security import generate_password_hash, check_password_hash
 

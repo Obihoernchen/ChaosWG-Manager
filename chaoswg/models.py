@@ -141,7 +141,6 @@ class Task(BaseModel):
     room = ForeignKeyField(Room, null=True)
     todo_time = DateTimeField(null=True)
     last_done = DateTimeField(null=True)
-    is_custom = BooleanField(default=False)
 
     @property
     def points(self):
@@ -162,7 +161,7 @@ class Task(BaseModel):
         need the property but dicts() doesn't work with it
         :return:
         """
-        return list(cls.select().where(cls.is_custom == False).order_by(cls.base_points.desc()))
+        return list(cls.select().order_by(cls.base_points.desc()))
 
     @classmethod
     def set_state(cls, id, state, user_id):
@@ -187,11 +186,19 @@ class Task(BaseModel):
                     User.id == user_id).execute()
 
                 # add to history
-                History.create(task=task.id, user=user_id, points=points_obtained, time=now)
+                History.create(task=task.task, user=user_id, points=points_obtained, time=now)
+
+    @staticmethod
+    def do_custom_task(task, points, user_id):
+        now = datetime.utcnow()
+        # update user points
+        User.update(points=User.points + points, last_update=now).where(User.id == user_id).execute()
+        # add to history
+        History.create(task=task, user=user_id, points=points, time=now)
 
 
 class History(BaseModel):
-    task = ForeignKeyField(Task)
+    task = CharField()
     user = ForeignKeyField(User)
     points = SmallIntegerField()
     time = DateTimeField(default=datetime.utcnow())
@@ -199,7 +206,6 @@ class History(BaseModel):
     @classmethod
     def get_user_history(cls, user):
         return list(
-            cls.select(cls.time, Task.task, cls.points)
+            cls.select(cls.time, cls.task, cls.points)
                 .join(User, on=(cls.user == User.id))
-                .join(Task, on=(cls.task == Task.id))
                 .where(User.username == user).dicts())

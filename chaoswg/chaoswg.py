@@ -3,7 +3,7 @@ from flask_babel import Babel
 from flask_bootstrap import Bootstrap, WebCDN
 from flask_login import LoginManager, login_user, logout_user, login_required, current_user
 
-from chaoswg.forms import LoginForm, CreateTaskForm
+from chaoswg.forms import LoginForm, CreateTaskForm, CustomTaskForm
 from chaoswg.models import init_database, create_tables, User, Task, History, insert_testdata
 from chaoswg.admin import init_admin
 from chaoswg.helpers import format_datetime_custom, format_timedelta_custom
@@ -106,23 +106,29 @@ def create_task():
     form = CreateTaskForm()
 
     if form.validate_on_submit():
-        if form.custom.data:
-            task, created = Task.get_or_create(task=form.task.data, defaults={'base_points': form.base_points.data,
-                                                                              'time_factor': form.time_factor.data,
-                                                                              'is_custom': True})
-            task.set_state(task.get_id(), Task.DONE, current_user.get_id())
-            return redirect('/tasks')
+        task, created = Task.get_or_create(task=form.task.data, defaults={'base_points': form.base_points.data,
+                                                                          'time_factor': form.time_factor.data})
+        if not created:
+            # TODO return error message, task exists
+            return '', 403
         else:
-            task, created = Task.get_or_create(task=form.task.data, defaults={'base_points': form.base_points.data,
-                                                                              'time_factor': form.time_factor.data})
-            if not created:
-                # TODO return error message, task exists
-                return '', 403
-            else:
-                # TODO return success message
-                return redirect('/tasks')
+            # TODO return success message
+            return redirect('/tasks')
 
     return render_template('create_task.html', form=form)
+
+
+@app.route('/do_custom_task', methods=['GET', 'POST'])
+@login_required
+def do_custom_task():
+    form = CustomTaskForm()
+
+    if form.validate_on_submit():
+        # do custom onetime task
+        Task.do_custom_task(form.task.data, form.points.data, current_user.get_id())
+        return redirect('/tasks')
+
+    return render_template('do_custom_task.html', form=form)
 
 
 @app.route('/tasks')

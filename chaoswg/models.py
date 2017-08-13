@@ -22,11 +22,11 @@ def create_tables():
 def insert_testdata():
     pwhash = generate_password_hash('123456')
     with db_wrapper.database.atomic():
-        User.get_or_create(username='User1', defaults={'password': pwhash})
-        User.get_or_create(username='User2', defaults={'password': pwhash})
-        User.get_or_create(username='User3', defaults={'password': pwhash})
-        User.get_or_create(username='User4', defaults={'password': pwhash})
-        User.get_or_create(username='User5', defaults={'password': pwhash})
+        # User.get_or_create(username='User1', defaults={'password': pwhash})
+        # User.get_or_create(username='User2', defaults={'password': pwhash})
+        # User.get_or_create(username='User3', defaults={'password': pwhash})
+        # User.get_or_create(username='User4', defaults={'password': pwhash})
+        # User.get_or_create(username='User5', defaults={'password': pwhash})
 
         Room.get_or_create(room='Bibliothek')
         Room.get_or_create(room='Flur')
@@ -48,8 +48,6 @@ def insert_testdata():
                            defaults={'base_points': 8, 'time_factor': 0.5, 'state': Task.BACKLOG})
         Task.get_or_create(task='Saugen + Wischen',
                            defaults={'base_points': 13, 'time_factor': 0.5, 'state': Task.TODO})
-        Task.get_or_create(task='Holzstuhl entsorgen',
-                           defaults={'base_points': 2, 'time_factor': 0.5, 'state': Task.TODO})
         Task.get_or_create(task='großes Bad',
                            defaults={'base_points': 8, 'time_factor': 0.5, 'state': Task.TODO})
         Task.get_or_create(task='kleines Bad',
@@ -168,25 +166,25 @@ class Task(BaseModel):
         # TODO db.atomic?
         # update task state and time
         task = cls.get(cls.id == id)
-        # do not update if state doesn't change
-        if task.state != state:
-            now = datetime.utcnow()
-            task.state = state
-            points_obtained = 0
-            if state == cls.DONE:
-                points_obtained = task.points
-                task.last_done = now
-            elif state == cls.TODO:
-                task.todo_time = now
-            task.save()
+        # do not update if state doesn't change. Actually allow this again
+        # if task.state != state:
+        now = datetime.utcnow()
+        task.state = state
+        points_obtained = 0
+        if state == cls.DONE:
+            points_obtained = task.points
+            task.last_done = now
+        elif state == cls.TODO:
+            task.todo_time = now
+        task.save()
 
-            # update user points if new state is DONE (user got points)
-            if points_obtained > 0:
-                User.update(points=User.points + points_obtained, last_update=now).where(
-                    User.id == user_id).execute()
+        # update user points if new state is DONE (user got points)
+        if points_obtained > 0:
+            User.update(points=User.points + points_obtained, last_update=now).where(
+                User.id == user_id).execute()
 
-                # add to history
-                History.create(task=task.task, user=user_id, points=points_obtained, time=now)
+            # add to history
+            History.create(task=task.task, user=user_id, points=points_obtained, time=now)
 
     @staticmethod
     def do_custom_task(task, points, user_id):

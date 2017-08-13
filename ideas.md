@@ -7,3 +7,6 @@
 - optimize the users=User.get_all() on all templates (cache it or something).
 
 - get task history from history table for each task and show in details (who did the task and when)
+
+- history diagram of all users (X different lines)
+- normalize y axis (date)

@@ -37,37 +37,37 @@ def insert_testdata():
         Room.get_or_create(room='Dachterrasse')
 
         Task.get_or_create(task='Kühlschrankcheck',
-                           defaults={'base_points': 2, 'time_factor': 0.5, 'state': Task.BACKLOG})
+                           defaults={'base_points': 2, 'time_factor': 0.0, 'state': Task.BACKLOG})
         Task.get_or_create(task='Grünabfall',
-                           defaults={'base_points': 1, 'time_factor': 0.5, 'state': Task.BACKLOG})
+                           defaults={'base_points': 1, 'time_factor': 0.0, 'state': Task.BACKLOG})
         Task.get_or_create(task='Fenster putzen',
-                           defaults={'base_points': 3, 'time_factor': 0.5, 'state': Task.BACKLOG})
+                           defaults={'base_points': 3, 'time_factor': 0.0, 'state': Task.BACKLOG})
         Task.get_or_create(task='Ofen reinigen',
-                           defaults={'base_points': 5, 'time_factor': 0.5, 'state': Task.BACKLOG})
+                           defaults={'base_points': 3, 'time_factor': 0.0, 'state': Task.BACKLOG})
         Task.get_or_create(task='Tiefkühler enteisen',
-                           defaults={'base_points': 8, 'time_factor': 0.5, 'state': Task.BACKLOG})
+                           defaults={'base_points': 8, 'time_factor': 0.0, 'state': Task.BACKLOG})
         Task.get_or_create(task='Saugen + Wischen',
-                           defaults={'base_points': 13, 'time_factor': 0.5, 'state': Task.TODO})
+                           defaults={'base_points': 13, 'time_factor': 0.0, 'state': Task.TODO})
         Task.get_or_create(task='großes Bad',
-                           defaults={'base_points': 8, 'time_factor': 0.5, 'state': Task.TODO})
+                           defaults={'base_points': 8, 'time_factor': 0.0, 'state': Task.TODO})
         Task.get_or_create(task='kleines Bad',
-                           defaults={'base_points': 3, 'time_factor': 0.5, 'state': Task.DONE})
+                           defaults={'base_points': 3, 'time_factor': 0.0, 'state': Task.DONE})
         Task.get_or_create(task='Rasen mähen + harken',
-                           defaults={'base_points': 13, 'time_factor': 0.5, 'state': Task.TODO})
+                           defaults={'base_points': 13, 'time_factor': 0.0, 'state': Task.TODO})
         Task.get_or_create(task='Küche putzen',
-                           defaults={'base_points': 2, 'time_factor': 0.5, 'state': Task.DONE})
+                           defaults={'base_points': 2, 'time_factor': 0.0, 'state': Task.DONE})
         Task.get_or_create(task='Abwaschen',
-                           defaults={'base_points': 2, 'time_factor': 0.5, 'state': Task.DONE})
+                           defaults={'base_points': 2, 'time_factor': 0.0, 'state': Task.DONE})
         Task.get_or_create(task='Einkaufen',
-                           defaults={'base_points': 3, 'time_factor': 0.5, 'state': Task.DONE})
+                           defaults={'base_points': 3, 'time_factor': 0.0, 'state': Task.DONE})
         Task.get_or_create(task='Pappe entsorgen',
-                           defaults={'base_points': 2, 'time_factor': 0.5, 'state': Task.DONE})
+                           defaults={'base_points': 2, 'time_factor': 0.0, 'state': Task.DONE})
         Task.get_or_create(task='Müll entsorgen',
-                           defaults={'base_points': 1, 'time_factor': 0.5, 'state': Task.DONE})
+                           defaults={'base_points': 1, 'time_factor': 0.0, 'state': Task.DONE})
         Task.get_or_create(task='Glas wegbringen',
-                           defaults={'base_points': 2, 'time_factor': 0.5, 'state': Task.DONE})
+                           defaults={'base_points': 2, 'time_factor': 0.0, 'state': Task.DONE})
         Task.get_or_create(task='GS ausräumen',
-                           defaults={'base_points': 2, 'time_factor': 0.5, 'state': Task.DONE})
+                           defaults={'base_points': 2, 'time_factor': 0.0, 'state': Task.DONE})
 
 
 class BaseModel(db_wrapper.Model):

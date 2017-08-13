@@ -7,3 +7,6 @@ flask-admin
 
 peewee
 wtf-peewee
+
+wtforms
+werkzeug

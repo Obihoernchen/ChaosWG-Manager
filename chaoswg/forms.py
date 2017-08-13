@@ -1,5 +1,5 @@
 from flask_wtf import FlaskForm
-from wtforms.fields import StringField, PasswordField, IntegerField, FloatField, SubmitField
+from wtforms.fields import StringField, PasswordField, IntegerField, FloatField, SubmitField, BooleanField
 from wtforms.validators import InputRequired, NumberRange
 
 
@@ -15,5 +15,6 @@ class CreateTaskForm(FlaskForm):
     base_points = IntegerField(u'Base Points', validators=[NumberRange(1, 13, 'Value must be between 1 and 13')])
     time_factor = FloatField(u'Time Factor', validators=[NumberRange(0.0, 3.0, 'Value must be between 0.0 and 3.0')])
     # room = StringField(u'Room', validators=[InputRequired()])
+    custom = BooleanField(u'Do this custom onetime task now')
 
     submit = SubmitField(u'Create Task')

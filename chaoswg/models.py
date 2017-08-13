@@ -1,7 +1,7 @@
 from datetime import datetime
 
 from peewee import (CharField, IntegerField, DateTimeField, SmallIntegerField, ForeignKeyField,
-                    FloatField, DoesNotExist)
+                    FloatField, BooleanField, DoesNotExist)
 from playhouse.flask_utils import FlaskDB
 from werkzeug.security import generate_password_hash, check_password_hash
 
@@ -141,6 +141,7 @@ class Task(BaseModel):
     room = ForeignKeyField(Room, null=True)
     todo_time = DateTimeField(null=True)
     last_done = DateTimeField(null=True)
+    is_custom = BooleanField(default=False)
 
     @property
     def points(self):
@@ -157,11 +158,11 @@ class Task(BaseModel):
     @classmethod
     def get_all(cls):
         """
-        Overwrite get_all() method because we need the property and dicts() doesn't
-        work with it
+        Overwrite get_all() method because we want to have active tasks only and
+        need the property but dicts() doesn't work with it
         :return:
         """
-        return list(cls.select().order_by(cls.base_points.desc()))
+        return list(cls.select().where(cls.is_custom == False).order_by(cls.base_points.desc()))
 
     @classmethod
     def set_state(cls, id, state, user_id):

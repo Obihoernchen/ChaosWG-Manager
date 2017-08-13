@@ -106,14 +106,21 @@ def create_task():
     form = CreateTaskForm()
 
     if form.validate_on_submit():
-        task, created = Task.get_or_create(task=form.task.data, defaults={'base_points': form.base_points.data,
-                                                                          'time_factor': form.time_factor.data})
-        if not created:
-            # TODO return error message, task exists
-            return '', 403
-        else:
-            # TODO return success message
+        if form.custom.data:
+            task, created = Task.get_or_create(task=form.task.data, defaults={'base_points': form.base_points.data,
+                                                                              'time_factor': form.time_factor.data,
+                                                                              'is_custom': True})
+            task.set_state(task.get_id(), Task.DONE, current_user.get_id())
             return redirect('/tasks')
+        else:
+            task, created = Task.get_or_create(task=form.task.data, defaults={'base_points': form.base_points.data,
+                                                                              'time_factor': form.time_factor.data})
+            if not created:
+                # TODO return error message, task exists
+                return '', 403
+            else:
+                # TODO return success message
+                return redirect('/tasks')
 
     return render_template('create_task.html', form=form)
 

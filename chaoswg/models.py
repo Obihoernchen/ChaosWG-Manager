@@ -206,4 +206,5 @@ class History(BaseModel):
         return list(
             cls.select(cls.time, cls.task, cls.points)
                 .join(User, on=(cls.user == User.id))
-                .where(User.username == user).dicts())
+                .where(User.username == user)
+                .order_by(cls.time.desc()).dicts())

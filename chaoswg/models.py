@@ -66,7 +66,7 @@ def insert_testdata():
                            defaults={'base_points': 1, 'time_factor': 0.0, 'state': Task.DONE})
         Task.get_or_create(task='Glas wegbringen',
                            defaults={'base_points': 2, 'time_factor': 0.0, 'state': Task.DONE})
-        Task.get_or_create(task='GS ausräumen',
+        Task.get_or_create(task='Geschirrspüler ausräumen',
                            defaults={'base_points': 2, 'time_factor': 0.0, 'state': Task.DONE})
 
 

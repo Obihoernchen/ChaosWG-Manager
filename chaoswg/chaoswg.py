@@ -17,7 +17,7 @@ app.config.from_pyfile('../config.py')
 init_database(app)
 create_tables()
 # TODO remove in production
-insert_testdata()
+# insert_testdata()
 
 # init login manager
 login_manager = LoginManager()

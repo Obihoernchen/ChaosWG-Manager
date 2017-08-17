@@ -163,36 +163,36 @@ class Task(BaseModel):
 
     @classmethod
     def set_state(cls, id, state, user_id):
-        # TODO db.atomic?
-        # update task state and time
-        task = cls.get(cls.id == id)
-        # do not update if state doesn't change. Actually allow this again
-        # if task.state != state:
         now = datetime.utcnow()
-        task.state = state
         points_obtained = 0
-        if state == cls.DONE:
-            points_obtained = task.points
-            task.last_done = now
-        elif state == cls.TODO:
-            task.todo_time = now
-        task.save()
+        with db_wrapper.database.atomic():
+            # update task state and time
+            task = cls.get(cls.id == id)
+            task.state = state
+            if state == cls.DONE:
+                points_obtained = task.points
+                task.last_done = now
+            elif state == cls.TODO:
+                task.todo_time = now
+            task.save()
 
-        # update user points if new state is DONE (user got points)
-        if points_obtained > 0:
-            User.update(points=User.points + points_obtained, last_update=now).where(
-                User.id == user_id).execute()
+            # update user points if new state is DONE (user got points)
+            if points_obtained > 0:
+                User.update(points=User.points + points_obtained, last_update=now).where(
+                    User.id == user_id).execute()
 
-            # add to history
-            History.create(task=task.task, user=user_id, points=points_obtained, time=now)
+                # add to history
+                History.create(task=task.task, user=user_id, points=points_obtained, time=now)
+
 
     @staticmethod
     def do_custom_task(task, points, user_id):
         now = datetime.utcnow()
-        # update user points
-        User.update(points=User.points + points, last_update=now).where(User.id == user_id).execute()
-        # add to history
-        History.create(task=task, user=user_id, points=points, time=now)
+        with db_wrapper.database.atomic():
+            # update user points
+            User.update(points=User.points + points, last_update=now).where(User.id == user_id).execute()
+            # add to history
+            History.create(task=task, user=user_id, points=points, time=now)
 
 
 class History(BaseModel):

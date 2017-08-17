@@ -42,7 +42,7 @@ init_admin(app)
 
 @app.route('/')
 def index():
-    return render_template('index.html', users=User.get_all())
+    return render_template('index.html', usernames=User.get_usernames())
 
 
 @app.route('/login', methods=['GET', 'POST'])
@@ -78,26 +78,18 @@ def logout():
 @app.route('/users')
 @login_required
 def get_users():
-    return render_template('users.html', users=User.get_all())
+    users = User.get_all()
+    usernames = set()
+    for user in users:
+        usernames.add(user['username'])
+    return render_template('users.html', users=users, usernames=usernames)
 
 
-@app.route('/json/users')
-@login_required
-def get_users_json():
-    return jsonify(User.get_all())
-
-
-@app.route('/user_history/<username>')
+@app.route('/history/<username>')
 @login_required
 def get_history(username):
     return render_template('history.html', userhist=History.get_user_history(username), username=username,
-                           users=User.get_all())
-
-
-@app.route('/json/user_history/<username>')
-@login_required
-def get_history_json(username):
-    return jsonify(History.get_user_history(username))
+                           usernames=User.get_usernames())
 
 
 @app.route('/create_task', methods=['GET', 'POST'])
@@ -146,7 +138,7 @@ def get_tasks():
     }
 
     return render_template('tasks.html', backlog=backlog, todo=todo, done=done, progress=progress,
-                           users=User.get_all())
+                           usernames=User.get_usernames())
 
 
 @app.route('/set_task_state', methods=['POST'])
@@ -161,3 +153,19 @@ def set_task_state():
         # TODO message
         return '', 403
     return '', 204  # Create customized model view class for Admin interface login
+
+
+#########################
+# JSON endpoints for JS #
+#########################
+
+@app.route('/json/history/<username>')
+@login_required
+def get_history_user_json(username):
+    return jsonify(History.get_user_history(username))
+
+
+@app.route('/json/users')
+@login_required
+def get_users_json():
+    return jsonify(User.get_all())

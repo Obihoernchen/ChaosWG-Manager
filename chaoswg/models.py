@@ -97,6 +97,14 @@ class User(BaseModel):
         except DoesNotExist:
             return False
 
+    @classmethod
+    def get_usernames(cls):
+        result = set()
+        query = cls.select(cls.username)
+        for user in query:
+            result.add(user.username)
+        return result
+
     def set_password(self, password):
         self.password = generate_password_hash(password)
 
@@ -208,3 +216,9 @@ class History(BaseModel):
                 .join(User, on=(cls.user == User.id))
                 .where(User.username == user)
                 .order_by(cls.time.desc()).dicts())
+
+    @classmethod
+    def get_full_history(cls):
+        return list(
+            cls.select(cls.time, cls.points, User.username)
+                .join(User, on=(cls.user == User.id)).dicts())

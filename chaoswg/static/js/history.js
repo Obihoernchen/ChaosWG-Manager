@@ -1,5 +1,5 @@
 var username = $('#username').text()
-$.getJSON('/json/user_history/' + username, function(result) {
+$.getJSON('/json/history/' + username, function(result) {
     // prepare data
     var time = [];
     var points = [];

@@ -36,8 +36,8 @@
                             class="caret"></span></a>
                     <ul class="dropdown-menu">
                         <li class="dropdown-header">Select a user</li>
-                        {% for u in users %}
-                        <li><a href="/user_history/{{u.username}}">{{u.username}}</a></li>
+                        {% for u in usernames %}
+                        <li><a href="/history/{{u}}">{{u}}</a></li>
                         {% endfor %}
                     </ul>
                 </li>

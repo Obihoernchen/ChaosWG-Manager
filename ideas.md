@@ -8,5 +8,4 @@
 
 - get task history from history table for each task and show in details (who did the task and when)
 
-- history diagram of all users (X different lines)
-- normalize y axis (date)
+- y-axis left and right

@@ -38,7 +38,10 @@ $.getJSON('/json/history/' + username, function(result) {
                 xAxes: [{
                     type: 'time',
                     time: {
-                        unit: 'day'
+                        unit: 'day',
+                        displayFormats: {
+                            day: 'DD.MM.YY'
+                        }
                     }
                 }],
                 yAxes: [{

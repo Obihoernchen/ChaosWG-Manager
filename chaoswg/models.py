@@ -192,7 +192,6 @@ class Task(BaseModel):
                 # add to history
                 History.create(task=task.task, user=user_id, points=points_obtained, time=now)
 
-
     @staticmethod
     def do_custom_task(task, points, user_id):
         now = datetime.utcnow()
@@ -221,4 +220,5 @@ class History(BaseModel):
     def get_full_history(cls):
         return list(
             cls.select(cls.time, cls.points, User.username)
-                .join(User, on=(cls.user == User.id)).dicts())
+                .join(User, on=(cls.user == User.id))
+                .order_by(cls.time.asc()).dicts())

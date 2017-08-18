@@ -1,4 +1,6 @@
-var username = $('#username').text()
+/* global $ */
+/* global Chart */
+var username = $('#username').text();
 $.getJSON('/json/history/' + username, function(result) {
     // prepare data
     var time = [];
@@ -15,7 +17,7 @@ $.getJSON('/json/history/' + username, function(result) {
         points.push(point_sum);
     });
     var ctx = document.getElementById('historyUserChart').getContext('2d');
-    var chart = new Chart(ctx, {
+    window.chart = new Chart(ctx, {
         type: 'line',
         data: {
             labels: time,

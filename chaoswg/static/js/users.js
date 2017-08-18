@@ -1,3 +1,5 @@
+/* global $ */
+/* global Chart */
 $.getJSON('/json/users', function(result) {
     // prepare data
     var users = [];
@@ -8,7 +10,7 @@ $.getJSON('/json/users', function(result) {
     });
 
     var ctx = document.getElementById('userChart').getContext('2d');
-    var chart = new Chart(ctx, {
+    window.chart = new Chart(ctx, {
         type: 'bar',
         data: {
             labels: users,

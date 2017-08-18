@@ -1,3 +1,4 @@
+/* global $ */
 function process_btn_press(element, state) {
     var popover = element.parents('.popover');
     var taskid = popover.prev().data('taskid');
@@ -17,11 +18,11 @@ function process_btn_press(element, state) {
     popovers.popover({
         placement: 'bottom',
         html: true,
-        content: '<div class="btn-group">'
-               + '<button type="button" class="btn btn-warning btn-backlog">Backlog</button>'
-               + '<button type="button" class="btn btn-danger btn-todo">ToDo</button>'
-               + '<button type="button" class="btn btn-success btn-done">Done</button>'
-               + '</div>'
+        content: '<div class="btn-group">' +
+                 '<button type="button" class="btn btn-warning btn-backlog">Backlog</button>' +
+                 '<button type="button" class="btn btn-danger btn-todo">ToDo</button>' +
+                 '<button type="button" class="btn btn-success btn-done">Done</button>' +
+                 '</div>'
     });
     // Only one popover at a time
     popovers.click(function(){

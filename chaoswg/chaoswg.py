@@ -85,10 +85,16 @@ def get_users():
     return render_template('users.html', users=users, usernames=usernames)
 
 
+@app.route('/history')
+@login_required
+def get_history():
+    return render_template('history.html', usernames=User.get_usernames())
+
+
 @app.route('/history/<username>')
 @login_required
-def get_history(username):
-    return render_template('history.html', userhist=History.get_user_history(username), username=username,
+def get_history_user(username):
+    return render_template('history_user.html', userhist=History.get_user_history(username), username=username,
                            usernames=User.get_usernames())
 
 
@@ -169,3 +175,18 @@ def get_history_user_json(username):
 @login_required
 def get_users_json():
     return jsonify(User.get_all())
+
+
+@app.route('/json/history')
+@login_required
+def get_history_json():
+    hist = History.get_full_history()
+    result = {}
+    for h in hist:
+        if h['username'] not in result:
+            result[h['username']] = []
+        result[h['username']].append({
+            'time': h['time'],
+            'points': h['points']
+        })
+    return jsonify(result)

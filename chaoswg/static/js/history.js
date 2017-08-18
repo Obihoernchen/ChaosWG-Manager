@@ -1,50 +1,59 @@
-var username = $('#username').text()
-$.getJSON('/json/history/' + username, function(result) {
+var config = {
+    type: 'scatter',
+    data: {
+        datasets: []
+    },
+    options: {
+        animation: {
+            duration: 3000
+        },
+        scales: {
+            xAxes: [{
+                type: 'time',
+                time: {
+                    unit: 'day'
+                }
+            }],
+            yAxes: [{
+                ticks: {
+                    beginAtZero: true
+                }
+            }]
+        }
+    }
+};
+
+$.getJSON('/json/history', function(result) {
     // prepare data
-    var time = [];
     var points = [];
     var point_sum = 0;
-    // reverse the order to be old --> new
-    result.reverse()
-    result.forEach(function(hist) {
-        time.push(hist.time);
-        point_sum += hist.points;
-        points.push(point_sum);
-    });
-    var ctx = document.getElementById('historyChart').getContext('2d');
-    var chart = new Chart(ctx, {
-        type: 'line',
-        data: {
-            labels: time,
-            datasets: [{
-                label: "Points",
-                backgroundColor: 'rgba(51, 122, 183, 0.7)',
-                borderColor: 'rgba(51, 122, 183, 1)',
-                borderWidth: 1,
-                data: points,
-                lineTension: 0
-            }]
-        },
-        options: {
-            animation: {
-                duration: 3000
-            },
-            legend: {
-                display: false
-            },
-            scales: {
-                xAxes: [{
-                    type: 'time',
-                    time: {
-                        unit: 'day'
-                    }
-                }],
-                yAxes: [{
-                    ticks: {
-                        beginAtZero: true
-                    }
-                }]
-            }
+    for (var user in result) {
+        // push initial value with 0 points
+        points.push({x: result[user][0].time, y: 0});
+        result[user].forEach(function(hist) {
+            point_sum += hist.points;
+            points.push({
+                x: hist.time,
+                y: point_sum
+            });
+        });
+
+        var color = '#'+string_to_color(user);
+        var dataset = {
+            label: user,
+            borderColor: color,
+            backgroundColor: color,
+            data: points,
+            lineTension: 0,
+            fill: false
         }
-    });
+        config.data.datasets.push(dataset);
+
+        // reset for next iteration
+        points = [];
+        point_sum = 0;
+    };
+
+    var ctx = document.getElementById('historyChart').getContext('2d');
+    var chart = new Chart(ctx, config)
 });

@@ -1,37 +1,12 @@
 {% extends "base.html" %}
 {% set active_page = "history" %}
-{% block title %}ChaosWG Manager - History of {{username}}{% endblock %}
+{% block title %}ChaosWG Manager - Overall History{% endblock %}
 
 {% block content %}
 <div class="container">
     <div class="row">
         <div class="col-sm-12">
-            <h2>History of <span id="username">{{username}}</span></h2>
-            <table class="table table-striped table-responsive">
-                <thead>
-                <tr>
-                    <th>Time</th>
-                    <th>Task</th>
-                    <th>Points</th>
-                </tr>
-                </thead>
-                <tbody>
-                {% for i in userhist %}
-                <tr>
-                    <td>{{i.time|datetime}}</td>
-                    <td>{{i.task}}</td>
-                    <td>{{i.points}}</td>
-                </tr>
-                {% endfor %}
-                </tbody>
-            </table>
-        </div>
-    </div>
-
-    <hr/>
-
-    <div class="row">
-        <div class="col-sm-12">
+            <h2>Overall History</h2>
             <canvas id="historyChart"></canvas>
         </div>
     </div>
@@ -42,5 +17,6 @@
 {{super()}}
 <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.18.1/moment.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.4.0/Chart.min.js"></script>
+<script src="{{url_for('.static', filename='js/string_to_color.js')}}"></script>
 <script src="{{url_for('.static', filename='js/history.js')}}"></script>
 {% endblock %}

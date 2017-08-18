@@ -35,6 +35,8 @@
                        aria-expanded="false"><span class="glyphicon glyphicon-time"></span> History <span
                             class="caret"></span></a>
                     <ul class="dropdown-menu">
+                        <li><a href="/history">Overall History</a></li>
+                        <li role="seperator" class="divider"></li>
                         <li class="dropdown-header">Select a user</li>
                         {% for u in usernames %}
                         <li><a href="/history/{{u}}">{{u}}</a></li>

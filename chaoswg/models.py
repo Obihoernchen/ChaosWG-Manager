@@ -99,8 +99,8 @@ class User(BaseModel):
 
     @classmethod
     def get_usernames(cls):
-        result = set()
         query = cls.select(cls.username)
+        result = set()
         for user in query:
             result.add(user.username)
         return result

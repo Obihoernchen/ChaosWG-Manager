@@ -24,7 +24,7 @@ $.getJSON('/json/history/' + username, function(result) {
                 backgroundColor: 'rgba(51, 122, 183, 0.7)',
                 borderColor: 'rgba(51, 122, 183, 1)',
                 data: points,
-                lineTension: 0
+                steppedLine: true
             }]
         },
         options: {

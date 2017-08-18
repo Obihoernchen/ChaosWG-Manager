@@ -44,8 +44,8 @@ $.getJSON('/json/history', function(result) {
             borderColor: color,
             backgroundColor: color,
             data: points,
-            lineTension: 0,
-            fill: false
+            fill: false,
+            steppedLine: true
         };
         config.data.datasets.push(dataset);
 

@@ -37,6 +37,10 @@ $.getJSON('/json/history/' + username, function(result) {
             scales: {
                 xAxes: [{
                     type: 'time',
+                    scaleLabel: {
+                        display: true,
+                        labelString: 'Date'
+                    },
                     time: {
                         unit: 'day',
                         displayFormats: {
@@ -45,6 +49,10 @@ $.getJSON('/json/history/' + username, function(result) {
                     }
                 }],
                 yAxes: [{
+                    scaleLabel: {
+                        display: true,
+                        labelString: 'Points'
+                    },
                     ticks: {
                         beginAtZero: true
                     }

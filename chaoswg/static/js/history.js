@@ -10,6 +10,10 @@ var config = {
         scales: {
             xAxes: [{
                 type: 'time',
+                scaleLabel: {
+                    display: true,
+                    labelString: 'Date'
+                },
                 time: {
                     unit: 'day',
                     displayFormats: {
@@ -18,6 +22,10 @@ var config = {
                 }
             }],
             yAxes: [{
+                scaleLabel: {
+                    display: true,
+                    labelString: 'Points'
+                },
                 ticks: {
                     beginAtZero: true
                 }

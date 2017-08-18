@@ -5,10 +5,10 @@ $.getJSON('/json/history/' + username, function(result) {
     var points = [];
     var point_sum = 0;
     // reverse the order to be old --> new
-    result.reverse()
+    result.reverse();
     // push initial value with 0 points
-    time.push(result[0].time)
-    points.push(0)
+    time.push(result[0].time);
+    points.push(0);
     result.forEach(function(hist) {
         time.push(hist.time);
         point_sum += hist.points;

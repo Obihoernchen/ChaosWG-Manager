@@ -46,7 +46,7 @@ $.getJSON('/json/history', function(result) {
             data: points,
             lineTension: 0,
             fill: false
-        }
+        };
         config.data.datasets.push(dataset);
 
         // reset for next iteration
@@ -55,5 +55,5 @@ $.getJSON('/json/history', function(result) {
     };
 
     var ctx = document.getElementById('historyChart').getContext('2d');
-    var chart = new Chart(ctx, config)
+    var chart = new Chart(ctx, config);
 });

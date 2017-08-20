@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from flask import Flask, render_template, request, redirect, jsonify
 from flask_babel import Babel
 from flask_bootstrap import Bootstrap, WebCDN
@@ -184,9 +186,21 @@ def get_history_json():
     result = {}
     for h in hist:
         if h['username'] not in result:
-            result[h['username']] = []
+            # initial 0 points
+            result[h['username']] = [{
+                'time': h['time'],
+                'points': 0
+            }]
         result[h['username']].append({
             'time': h['time'],
             'points': h['points']
         })
+
+    # same point count till today
+    for user in result:
+        result[user].append({
+            'time': datetime.utcnow(),
+            'points': 0
+        })
+
     return jsonify(result)

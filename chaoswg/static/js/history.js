@@ -53,8 +53,6 @@ $.getJSON('/json/history', function(result) {
     var point_sum = 0;
     for (var user in result) {
         if (result.hasOwnProperty(user)) {
-            // push initial value with 0 points
-            points.push({x: result[user][0].time, y: 0});
             result[user].forEach(function(hist) {
                 point_sum += hist.points;
                 points.push({

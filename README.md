@@ -1,5 +1,9 @@
 # ChaosWG-Manager
+![Python 3](https://img.shields.io/badge/python-3-blue.svg) [![License](https://img.shields.io/badge/license-AGPLv3-blue.svg)](https://github.com/Obihoernchen/ChaosWG-Manager/blob/master/LICENSE)
+
 ChaosWG-Manager is a living community planner.
+
+![Screenshot](https://cdn.rawgit.com/Obihoernchen/ChaosWG-Manager/855714eb/Screenshot.png)
 
 ## TODO
 - use AJAX so we don't have to reload the whole page (single page with dynamic content)

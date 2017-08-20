@@ -1,5 +1,5 @@
 # ChaosWG-Manager
-![Python 3](https://img.shields.io/badge/python-3-blue.svg) [![License](https://img.shields.io/badge/license-AGPLv3-blue.svg)](https://github.com/Obihoernchen/ChaosWG-Manager/blob/master/LICENSE)
+[![Build Status](https://scrutinizer-ci.com/g/Obihoernchen/ChaosWG-Manager/badges/build.png?b=master)](https://scrutinizer-ci.com/g/Obihoernchen/ChaosWG-Manager/build-status/master) [![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/Obihoernchen/ChaosWG-Manager/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/Obihoernchen/ChaosWG-Manager/?branch=master) ![Python 3](https://img.shields.io/badge/python-3-blue.svg) [![License](https://img.shields.io/badge/license-AGPLv3-blue.svg)](https://github.com/Obihoernchen/ChaosWG-Manager/blob/master/LICENSE)
 
 ChaosWG-Manager is a living community planner.
 

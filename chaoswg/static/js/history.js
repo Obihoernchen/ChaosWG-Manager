@@ -1,6 +1,5 @@
 /* global $ */
 /* global Chart */
-/* global string_to_color */
 var config = {
     type: 'scatter',
     data: {
@@ -37,6 +36,17 @@ var config = {
     }
 };
 
+// Chart colors: green, purple, red, orange, blue, yellow, grey
+var chartColors = [
+    'rgb(75, 192, 192)',
+    'rgb(153, 102, 255)',
+    'rgb(255, 99, 132)',
+    'rgb(255, 159, 64)',
+    'rgb(54, 162, 235)',
+    'rgb(255, 205, 86)',
+    'rgb(201, 203, 207)'
+];
+
 $.getJSON('/json/history', function(result) {
     // prepare data
     var points = [];
@@ -53,7 +63,8 @@ $.getJSON('/json/history', function(result) {
                 });
             });
 
-            var color = '#'+string_to_color(user);
+            var color = chartColors[config.data.datasets.length % chartColors.length];
+
             var dataset = {
                 label: user,
                 borderColor: color,

@@ -3,6 +3,9 @@
 
 ChaosWG-Manager is a living community planner.
 
+It's built with Flask, Bootstrap and Peewee.
+
+
 ![Screenshot](https://cdn.rawgit.com/Obihoernchen/ChaosWG-Manager/855714eb/Screenshot.png)
 
 ## TODO

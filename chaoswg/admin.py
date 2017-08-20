@@ -12,7 +12,8 @@ from chaoswg.models import User, Task, Room, History
 class AuthAdminModelView(ModelView):
     form_base_class = SecureForm
 
-    def is_accessible(self):
+    @staticmethod
+    def is_accessible():
         return current_user.is_authenticated
 
 

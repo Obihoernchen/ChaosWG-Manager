@@ -170,12 +170,12 @@ class Task(BaseModel):
         return list(cls.select().order_by(cls.base_points.desc()))
 
     @classmethod
-    def set_state(cls, id, state, user_id):
+    def set_state(cls, task_id, state, user_id):
         now = datetime.utcnow()
         points_obtained = 0
         with db_wrapper.database.atomic():
             # update task state and time
-            task = cls.get(cls.id == id)
+            task = cls.get(cls.id == task_id)
             task.state = state
             if state == cls.DONE:
                 points_obtained = task.points

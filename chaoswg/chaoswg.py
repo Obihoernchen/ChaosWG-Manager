@@ -111,9 +111,9 @@ def create_task():
         if not created:
             # TODO return error message, task exists
             return '', 403
-        else:
-            # TODO return success message
-            return redirect('/tasks')
+
+        # TODO return success message
+        return redirect('/tasks')
 
     return render_template('create_task.html', form=form)
 

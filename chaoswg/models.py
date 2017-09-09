@@ -179,9 +179,12 @@ class Task(BaseModel):
             task.state = state
             if state == cls.DONE:
                 points_obtained = task.points
+                task.todo_time = None
                 task.last_done = now
             elif state == cls.TODO:
                 task.todo_time = now
+            elif state == cls.BACKLOG:
+                task.todo_time = None
             task.save()
 
             # update user points if new state is DONE (user got points)

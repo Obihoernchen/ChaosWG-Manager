@@ -4,11 +4,12 @@ function process_btn_press(element, state) {
     var taskid = popover.prev().data('taskid');
     var data = {id: taskid, state: state};
     // send actual HTTP POST request to app
-    $.post('/set_task_state', data );
+    // TODO: this is bad but whatever...
+    $.post('/set_task_state', data, location.reload());
     // TODO error handling
-    popover.popover('hide');
+    //popover.popover('hide');
     // TODO improve
-    location.reload();
+    //location.reload();
 }
 
 // ready not needed because it's loaded at the end of body

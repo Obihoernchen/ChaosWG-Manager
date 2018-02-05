@@ -1,7 +1,7 @@
 from datetime import datetime
 
 from peewee import (CharField, IntegerField, DateTimeField, SmallIntegerField, ForeignKeyField,
-                    FloatField, DoesNotExist)
+                    FloatField, DoesNotExist, SqliteDatabase)
 from playhouse.flask_utils import FlaskDB
 from werkzeug.security import generate_password_hash, check_password_hash
 
@@ -9,6 +9,7 @@ db_wrapper = FlaskDB()
 
 
 def init_database(app):
+    db_wrapper._db = SqliteDatabase(app.config['DATABASE'], pragmas=(('journal_mode', 'wal'),))
     db_wrapper.init_app(app)
     return db_wrapper.database
 

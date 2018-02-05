@@ -8,7 +8,7 @@ BASE_DIR = os.path.abspath(os.path.dirname(__file__))
 
 # Define the database - we are working with
 # SQLite for this example
-DATABASE = 'sqlite:///' + os.path.join(BASE_DIR, 'chaoswg.sqlite')
+DATABASE = os.path.join(BASE_DIR, 'chaoswg.sqlite')
 
 # Application threads. A common general assumption is
 # using 2 per available processor cores - to handle

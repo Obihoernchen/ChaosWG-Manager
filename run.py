@@ -1,4 +1,7 @@
-from chaoswg import chaoswg
+# This should be used for development/debugging purposes only
+# Use a proper WSGI server for production use
+
+from chaoswg import app
 
 if __name__ == '__main__':
-    chaoswg.app.run(host='0.0.0.0', port=5000, threaded=True)
+    app.run(host='127.0.0.1', port=5000, debug=True)

@@ -160,7 +160,8 @@ def set_task_state():
     else:
         # TODO message
         return '', 403
-    return '', 204  # Create customized model view class for Admin interface login
+    # New state was set
+    return '', 204
 
 
 #########################

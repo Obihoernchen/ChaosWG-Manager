@@ -70,13 +70,13 @@ def insert_testdata():
                            defaults={'base_points': 2, 'time_factor': 0.0, 'state': Task.DONE})
 
 
-class BaseModel(db_wrapper.Model):
+class ModelBase(db_wrapper.Model):
     @classmethod
     def get_all(cls):
         return list(cls.select().dicts())
 
 
-class User(BaseModel):
+class User(ModelBase):
     username = CharField(unique=True)
     password = CharField()
     points = IntegerField(default=0)
@@ -136,7 +136,7 @@ class Room(db_wrapper.Model):
     room = CharField(unique=True)
 
 
-class Task(BaseModel):
+class Task(ModelBase):
     task = CharField(unique=True)
     base_points = SmallIntegerField()
     time_factor = FloatField(default=0.0)
@@ -205,7 +205,7 @@ class Task(BaseModel):
             History.create(task=task, user=user_id, points=points, time=now)
 
 
-class History(BaseModel):
+class History(ModelBase):
     task = CharField()
     user = ForeignKeyField(User)
     points = SmallIntegerField()

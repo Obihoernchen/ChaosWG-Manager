@@ -26,11 +26,11 @@ Edit user, group and paths, and put the following in a VirtualHost section.
 ```
 WSGIDaemonProcess chaoswg user=<your_user> group=<your_group> threads=5 python-path=/srv/ChaosWG-Manager
 WSGIScriptAlias / /srv/ChaosWG-Manager/chaoswg.wsgi
-    <Directory /srv/ChaosWG-Manager>
-        WSGIProcessGroup chaoswg
-        WSGIApplicationGroup %{GLOBAL}
-        Require all granted
-    </Directory>
+<Directory /srv/ChaosWG-Manager>
+    WSGIProcessGroup chaoswg
+    WSGIApplicationGroup %{GLOBAL}
+    Require all granted
+</Directory>
 ```
 For more information and other examples see: [Flask Documentation](http://flask.pocoo.org/docs/0.12/deploying/#self-hosted-options)
 

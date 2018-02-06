@@ -6,6 +6,7 @@ var config = {
         datasets: []
     },
     options: {
+        showLines: true,
         animation: {
             duration: 3000
         },

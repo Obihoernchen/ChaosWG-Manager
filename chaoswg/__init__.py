@@ -29,7 +29,7 @@ login_manager.init_app(app)
 Bootstrap(app)
 # jQuery 3 instead of 1
 app.extensions['bootstrap']['cdns']['jquery'] = WebCDN(
-    '//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/'
+    '//cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/'
 )
 
 # Enable babel support

@@ -17,9 +17,10 @@ pip3 install -r requirements --upgrade
 or use a virtualenv.
 
 ### Run
-For debugging/testing purposes simply execute run.py.
+For debugging/testing purposes simply execute `python3 run.py`.
 
 For production use a proper WSGI server like Apache + mod_wsgi, Gunicorn, uWSGI, ...
+
 This is a configuration example for Apache with mod_wsgi.
 Edit user, group and paths, and put the following in a VirtualHost section.
 ```

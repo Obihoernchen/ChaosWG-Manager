@@ -8,7 +8,4 @@ import logging
 
 logging.basicConfig(stream=sys.stderr)
 
-# Set your path here
-sys.path.insert(0,"/srv/ChaosWG-Manager/")
-
 from chaoswg import app as application

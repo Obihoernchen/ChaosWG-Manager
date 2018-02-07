@@ -1,12 +1,13 @@
-import time
-import schedule
 import threading
+import time
 from datetime import datetime
+
+import schedule
 
 from chaoswg import Task
 
 
-class TaskScheduler():
+class TaskScheduler:
     INTERVAL = 60
 
     def __init__(self):
@@ -23,7 +24,7 @@ class TaskScheduler():
         for task in schedule_tasks:
             if task['last_done'] is not None:
                 delta = now - task['last_done']
-                if delta.days() >= task['schedule_days']:
+                if delta.days >= task['schedule_days']:
                     Task.set_todo(task['id'])
             else:
                 # Task was not done yet

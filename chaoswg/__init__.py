@@ -5,10 +5,10 @@ from flask_babel import Babel
 from flask_bootstrap import Bootstrap, WebCDN
 from flask_login import LoginManager, login_user, logout_user, login_required, current_user
 
-from chaoswg.forms import LoginForm, CreateTaskForm, CustomTaskForm
-from chaoswg.models import init_database, create_tables, User, Task, History, insert_testdata
 from chaoswg.admin import init_admin
+from chaoswg.forms import LoginForm, CreateTaskForm, CustomTaskForm
 from chaoswg.helpers import format_datetime_custom, format_timedelta_custom
+from chaoswg.models import init_database, create_tables, User, Task, History, insert_testdata
 from chaoswg.scheduler import TaskScheduler
 
 # init app and load config

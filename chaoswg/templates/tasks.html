@@ -9,21 +9,21 @@
             <h2>Backlog</h2>
             <table class="table table-hover table-responsive">
                 <thead>
-                <tr>
-                    <th>Task</th>
-                    <th>Points</th>
-                    <th>Last done</th>
-                </tr>
+                    <tr>
+                        <th>Task</th>
+                        <th>Points</th>
+                        <th>Last done</th>
+                    </tr>
                 </thead>
                 <tbody>
-                {% for task in backlog %}
-                <tr data-toggle="popover" title="{{task.task}} <a href='#' class='close' data-dismiss='alert'>×</a>"
-                    data-taskid="{{task.id}}">
-                    <td>{{task.task}}</td>
-                    <td>{{task.base_points}}</td>
-                    <td>{{task.last_done|timedelta}}</td>
-                </tr>
-                {% endfor %}
+                    {% for task in backlog %}
+                    <tr data-toggle="popover" title="{{task.task}} <a href='#' class='close' data-dismiss='alert'>×</a>"
+                        data-taskid="{{task.id}}">
+                        <td>{{task.task}}</td>
+                        <td>{{task.base_points}}</td>
+                        <td>{{task.last_done|timedelta}}</td>
+                    </tr>
+                    {% endfor %}
                 </tbody>
             </table>
         </div>
@@ -32,27 +32,27 @@
             <h2>ToDo</h2>
             <table class="table table-hover table-responsive">
                 <thead>
-                <tr>
-                    <th>Task</th>
-                    <th>Points</th>
-                    <th>Last done</th>
-                </tr>
+                    <tr>
+                        <th>Task</th>
+                        <th>Points</th>
+                        <th>Last done</th>
+                    </tr>
                 </thead>
                 <tbody>
-                {% for task in todo %}
-                <tr data-toggle="popover" title="{{task.task}} <a href='#' class='close' data-dismiss='alert'>×</a>"
-                    {% if task.points - task.base_points>= 2 %}
-                    class="danger"
-                    {% elif task.points - task.base_points >= 1 %}
-                    class="warning"{% endif %}
-                    data-taskid="{{task.id}}">
-                    <td>{{task.task}}</td>
-                    <td><strong>{{task.points}}</strong> {% if task.points != task.base_points
-                        %}({{task.base_points}}){% endif %}
-                    </td>
-                    <td>{{task.last_done|timedelta}}</td>
-                </tr>
-                {% endfor %}
+                    {% for task in todo %}
+                    <tr data-toggle="popover" title="{{task.task}} <a href='#' class='close' data-dismiss='alert'>×</a>"
+                        {% if task.points - task.base_points>= 2 %}
+                        class="danger"
+                        {% elif task.points - task.base_points >= 1 %}
+                        class="warning"{% endif %}
+                        data-taskid="{{task.id}}">
+                        <td>{{task.task}}</td>
+                        <td><strong>{{task.points}}</strong> {% if task.points != task.base_points
+                            %}({{task.base_points}}){% endif %}
+                        </td>
+                        <td>{{task.last_done|timedelta}}</td>
+                    </tr>
+                    {% endfor %}
                 </tbody>
 
             </table>
@@ -62,21 +62,21 @@
             <h2>Done</h2>
             <table class="table table-hover table-responsive">
                 <thead>
-                <tr>
-                    <th>Task</th>
-                    <th>Points</th>
-                    <th>Last done</th>
-                </tr>
+                    <tr>
+                        <th>Task</th>
+                        <th>Points</th>
+                        <th>Last done</th>
+                    </tr>
                 </thead>
                 <tbody>
-                {% for task in done %}
-                <tr data-toggle="popover" title="{{task.task}} <a href='#' class='close' data-dismiss='alert'>×</a>"
-                    data-taskid="{{task.id}}">
-                    <td>{{task.task}}</td>
-                    <td>{{task.base_points}}</td>
-                    <td>{{task.last_done|timedelta}}</td>
-                </tr>
-                {% endfor %}
+                    {% for task in done %}
+                    <tr data-toggle="popover" title="{{task.task}} <a href='#' class='close' data-dismiss='alert'>×</a>"
+                        data-taskid="{{task.id}}">
+                        <td>{{task.task}}</td>
+                        <td>{{task.base_points}}</td>
+                        <td>{{task.last_done|timedelta}}</td>
+                    </tr>
+                    {% endfor %}
                 </tbody>
 
             </table>
@@ -88,8 +88,7 @@
     <div class="row">
         <div class="col-sm-12">
             <div class="progress">
-                <div class="progress-bar progress-bar-warning" role="progressbar"
-                     style="width:{{progress['backlog']}}%">
+                <div class="progress-bar progress-bar-warning" role="progressbar" style="width:{{progress['backlog']}}%">
                     {{progress['backlog']|int}}% Backlog
                 </div>
                 <div class="progress-bar progress-bar-danger" role="progressbar" style="width:{{progress['todo']}}%">

@@ -196,7 +196,7 @@ class Task(ModelBase):
     def get_schedule_tasks(cls):
         return list(
             cls.select(cls.id, cls.last_done, cls.schedule_days)
-                .where((cls.schedule_days.is_null(False)) & (cls.state != cls.TODO)).dicts())
+               .where((cls.schedule_days.is_null(False)) & (cls.state != cls.TODO)).dicts())
 
     @staticmethod
     def do_custom_task(task, points, user_id):
@@ -218,13 +218,13 @@ class History(ModelBase):
     def get_user_history(cls, user):
         return list(
             cls.select(cls.time, cls.task, cls.points)
-                .join(User, on=(cls.user == User.id))
-                .where(User.username == user)
-                .order_by(cls.time.desc()).dicts())
+               .join(User, on=(cls.user == User.id))
+               .where(User.username == user)
+               .order_by(cls.time.desc()).dicts())
 
     @classmethod
     def get_full_history(cls):
         return list(
             cls.select(cls.time, cls.points, User.username)
-                .join(User, on=(cls.user == User.id))
-                .order_by(cls.time.asc()).dicts())
+               .join(User, on=(cls.user == User.id))
+               .order_by(cls.time.asc()).dicts())

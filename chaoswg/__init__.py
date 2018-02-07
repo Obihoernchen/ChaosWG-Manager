@@ -8,7 +8,7 @@ from flask_login import LoginManager, login_user, logout_user, login_required, c
 from chaoswg.admin import init_admin
 from chaoswg.forms import LoginForm, CreateTaskForm, CustomTaskForm
 from chaoswg.helpers import format_datetime_custom, format_timedelta_custom
-from chaoswg.models import init_database, create_tables, User, Task, History, insert_testdata
+from chaoswg.models import init_database, create_tables, User, Task, History
 from chaoswg.scheduler import TaskScheduler
 
 # init app and load config
@@ -20,7 +20,7 @@ app.config.from_pyfile('../config.py')
 init_database(app)
 create_tables()
 # Comment out in production
-# insert_testdata()
+# insert_testdata(database)
 
 # init login manager
 login_manager = LoginManager()

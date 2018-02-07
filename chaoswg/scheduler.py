@@ -13,8 +13,8 @@ class TaskScheduler(threading.Thread):
         # init a daemonized thread
         threading.Thread.__init__(self, daemon=True)
         self.interval = interval
-        # register the schedule every day at 5 o'clock
-        schedule.every().day.at('5:00').do(self.schedule_tasks)
+        # run an update every hour
+        schedule.every().hour.do(self.schedule_tasks)
 
     @staticmethod
     def schedule_tasks():

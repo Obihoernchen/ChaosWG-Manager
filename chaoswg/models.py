@@ -187,10 +187,11 @@ class Task(ModelBase):
     @classmethod
     def set_todo(cls, task_id):
         now = datetime.utcnow()
-        task = cls.get(cls.id == task_id)
-        task.state = cls.TODO
-        task.todo_time = now
-        task.save()
+        with db_wrapper.database.atomic():
+            task = cls.get(cls.id == task_id)
+            task.state = cls.TODO
+            task.todo_time = now
+            task.save()
 
     @classmethod
     def get_schedule_tasks(cls):

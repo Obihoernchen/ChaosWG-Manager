@@ -42,8 +42,14 @@ app.jinja_env.filters['timedelta'] = format_timedelta_custom
 # init admin interface
 init_admin(app)
 
-# Start the task scheduler thread
-TaskScheduler()
+# Create the task scheduler thread
+task_scheduler = TaskScheduler()
+
+
+@app.before_first_request
+def start_task_scheduler():
+    # Start the task scheduler thread only once even if app is in debug mode
+    task_scheduler.start()
 
 
 @app.route('/')

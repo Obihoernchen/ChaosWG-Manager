@@ -16,7 +16,7 @@ def init_database(app):
 
 def create_tables():
     db_wrapper.database.connect()
-    db_wrapper.database.create_tables([User, Room, Task, History], safe=True)
+    db_wrapper.database.create_tables([User, Task, History], safe=True)
     db_wrapper.database.close()
 
 
@@ -28,14 +28,6 @@ def insert_testdata():
         # User.get_or_create(username='User3', defaults={'password': pwhash})
         # User.get_or_create(username='User4', defaults={'password': pwhash})
         # User.get_or_create(username='User5', defaults={'password': pwhash})
-
-        Room.get_or_create(room='Bibliothek')
-        Room.get_or_create(room='Flur')
-        Room.get_or_create(room='Küche')
-        Room.get_or_create(room='großes Bad')
-        Room.get_or_create(room='kleines Bad')
-        Room.get_or_create(room='Abstellzimmer')
-        Room.get_or_create(room='Dachterrasse')
 
         Task.get_or_create(task='Kühlschrankcheck',
                            defaults={'base_points': 2, 'time_factor': 0.0, 'state': Task.BACKLOG})
@@ -133,10 +125,6 @@ class User(ModelBase):
         return self.username
 
 
-class Room(db_wrapper.Model):
-    room = CharField(unique=True)
-
-
 class Task(ModelBase):
     task = CharField(unique=True)
     base_points = SmallIntegerField()
@@ -145,7 +133,6 @@ class Task(ModelBase):
     BACKLOG = 0
     TODO = 1
     DONE = 2
-    room = ForeignKeyField(Room, null=True)
     todo_time = DateTimeField(null=True)
     last_done = DateTimeField(null=True)
 

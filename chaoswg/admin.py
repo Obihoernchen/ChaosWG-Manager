@@ -13,7 +13,7 @@ class AuthAdminModelView(ModelView):
     form_base_class = SecureForm
 
     @staticmethod
-    def is_accessible(**kwargs):
+    def is_accessible():
         return current_user.is_authenticated
 
 

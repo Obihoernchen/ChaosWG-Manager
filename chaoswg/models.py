@@ -21,7 +21,7 @@ def create_tables():
 
 
 def insert_testdata():
-    pwhash = generate_password_hash('123456')
+    # pwhash = generate_password_hash('123456')
     with db_wrapper.database.atomic():
         # User.get_or_create(username='User1', defaults={'password': pwhash})
         # User.get_or_create(username='User2', defaults={'password': pwhash})
@@ -135,6 +135,7 @@ class Task(ModelBase):
     DONE = 2
     todo_time = DateTimeField(null=True)
     last_done = DateTimeField(null=True)
+    schedule_days = SmallIntegerField(null=True)
 
     @property
     def points(self):
@@ -182,6 +183,20 @@ class Task(ModelBase):
 
                 # add to history
                 History.create(task=task.task, user=user_id, points=points_obtained, time=now)
+
+    @classmethod
+    def set_todo(cls, task_id):
+        now = datetime.utcnow()
+        task = cls.get(cls.id == task_id)
+        task.state = cls.TODO
+        task.todo_time = now
+        task.save()
+
+    @classmethod
+    def get_schedule_tasks(cls):
+        return list(
+            cls.select(cls.id, cls.last_done, cls.schedule_days)
+                .where((cls.schedule_days.is_null(False)) & (cls.state != cls.TODO)).dicts())
 
     @staticmethod
     def do_custom_task(task, points, user_id):

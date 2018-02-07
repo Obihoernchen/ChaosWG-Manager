@@ -1,6 +1,6 @@
 from flask_wtf import FlaskForm
 from wtforms.fields import StringField, PasswordField, IntegerField, FloatField, SubmitField
-from wtforms.validators import InputRequired, NumberRange
+from wtforms.validators import InputRequired, NumberRange, Optional
 
 
 class LoginForm(FlaskForm):
@@ -14,6 +14,8 @@ class CreateTaskForm(FlaskForm):
     task = StringField(u'Task', validators=[InputRequired()])
     base_points = IntegerField(u'Base Points', validators=[NumberRange(1, 13, 'Value must be between 1 and 13')])
     time_factor = FloatField(u'Time Factor', validators=[NumberRange(0.0, 3.0, 'Value must be between 0.0 and 3.0')])
+    schedule_days = IntegerField(u'Schedule every X days',
+                                 validators=[Optional(), NumberRange(1, 365, 'Value must be between 1 and 365')])
 
     submit = SubmitField(u'Create Task')
 

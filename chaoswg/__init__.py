@@ -9,6 +9,7 @@ from chaoswg.forms import LoginForm, CreateTaskForm, CustomTaskForm
 from chaoswg.models import init_database, create_tables, User, Task, History, insert_testdata
 from chaoswg.admin import init_admin
 from chaoswg.helpers import format_datetime_custom, format_timedelta_custom
+from chaoswg.scheduler import TaskScheduler
 
 # init app and load config
 app = Flask(__name__)
@@ -18,7 +19,7 @@ app.config.from_pyfile('../config.py')
 # init DB
 init_database(app)
 create_tables()
-# TODO remove in production
+# Comment out in production
 # insert_testdata()
 
 # init login manager
@@ -40,6 +41,9 @@ app.jinja_env.filters['timedelta'] = format_timedelta_custom
 
 # init admin interface
 init_admin(app)
+
+# Start the task scheduler thread
+TaskScheduler()
 
 
 @app.route('/')
@@ -107,7 +111,8 @@ def create_task():
 
     if form.validate_on_submit():
         task, created = Task.get_or_create(task=form.task.data, defaults={'base_points': form.base_points.data,
-                                                                          'time_factor': form.time_factor.data})
+                                                                          'time_factor': form.time_factor.data,
+                                                                          'schedule_days': form.schedule_days.data})
         if not created:
             # TODO return error message, task exists
             return '', 403

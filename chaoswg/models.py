@@ -84,15 +84,18 @@ class User(ModelBase):
 
 class Task(ModelBase):
     task = CharField(unique=True)
-    base_points = SmallIntegerField()
+    base_points = SmallIntegerField(index=True)
     time_factor = FloatField(default=0.0)
-    state = SmallIntegerField(index=True, default=0)
+    state = SmallIntegerField(default=0)
     BACKLOG = 0
     TODO = 1
     DONE = 2
     todo_time = DateTimeField(null=True)
     last_done = DateTimeField(null=True)
     schedule_days = SmallIntegerField(null=True)
+
+    class Meta:
+        indexes = ((('schedule_days', 'state'), False),)
 
     @property
     def points(self):
@@ -170,7 +173,7 @@ class History(ModelBase):
     task = CharField()
     user = ForeignKeyField(User)
     points = SmallIntegerField()
-    time = DateTimeField(default=datetime.utcnow())
+    time = DateTimeField(index=True, default=datetime.utcnow())
 
     @classmethod
     def get_user_history(cls, user):

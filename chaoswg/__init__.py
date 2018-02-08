@@ -10,6 +10,7 @@ from chaoswg.forms import LoginForm, CreateTaskForm, CustomTaskForm
 from chaoswg.helpers import format_datetime_custom, format_timedelta_custom
 from chaoswg.models import init_database, create_tables, User, Task, History
 from chaoswg.scheduler import TaskScheduler
+# from test.testdata import insert_testdata
 
 # init app and load config
 app = Flask(__name__)
@@ -17,7 +18,7 @@ app = Flask(__name__)
 app.config.from_pyfile('../config.py')
 
 # init DB
-init_database(app)
+database = init_database(app)
 create_tables()
 # Comment out in production
 # insert_testdata(database)

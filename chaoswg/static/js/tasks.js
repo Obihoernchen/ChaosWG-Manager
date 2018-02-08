@@ -13,7 +13,7 @@ function process_btn_press(element, state) {
 // Init popovers
 var popovers = $('[data-toggle="popover"]');
 popovers.popover({
-    placement: 'bottom',
+    placement: 'bottom auto',
     html: true,
     content: '<div class="btn-group">' +
              '<button type="button" class="btn btn-warning btn-backlog">Backlog</button>' +

@@ -36,18 +36,16 @@
             {% if current_user.is_authenticated %}
             <ul class="nav navbar-nav">
                 {% set active_page = active_page|default('index') %}
-                <li
-                {% if active_page == "tasks" %} class="active"{% endif %}>
-                <a href="/tasks"><span class="glyphicon glyphicon-check"></span> Tasks</a>
+                <li{% if active_page == "tasks" %} class="active"{% endif %}>
+                    <a href="/tasks"><span class="glyphicon glyphicon-check"></span> Tasks</a>
                 </li>
-                <li
-                {% if active_page == "users" %} class="active"{% endif %}>
-                <a href="/users"><span class="glyphicon glyphicon-user"></span> Users</a>
+                <li{% if active_page == "users" %} class="active"{% endif %}>
+                    <a href="/users"><span class="glyphicon glyphicon-user"></span> Users</a>
                 </li>
                 <li class="dropdown{% if active_page == "history" %} active{% endif %}">
                     <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true"
                        aria-expanded="false"><span class="glyphicon glyphicon-time"></span> History <span
-                            class="caret"></span></a>
+                       class="caret"></span></a>
                     <ul class="dropdown-menu">
                         <li><a href="/history">Overall History</a></li>
                         <li role="separator" class="divider"></li>
@@ -61,13 +59,14 @@
             {% endif %}
             <ul class="nav navbar-nav navbar-right">
                 {% if not current_user.is_authenticated %}
-                <li
-                {% if active_page == "login" %} class="active"{% endif %}>
-                <a href="/login"><span class="glyphicon glyphicon-log-in"></span> Login</a>
+                <li{% if active_page == "login" %} class="active"{% endif %}>
+                    <a href="/login"><span class="glyphicon glyphicon-log-in"></span> Login</a>
                 </li>
                 {% else %}
-                <li><a href="/admin"><span class="glyphicon glyphicon-cog"></span> Admin</a>
-                <li><a href="/logout"><span class="glyphicon glyphicon-log-out"></span> Logout {{current_user.username}}</a>
+                <li>
+                    <a href="/admin"><span class="glyphicon glyphicon-cog"></span> Admin</a>
+                <li>
+                    <a href="/logout"><span class="glyphicon glyphicon-log-out"></span> Logout {{current_user.username}}</a>
                 </li>
                 {% endif %}
             </ul>

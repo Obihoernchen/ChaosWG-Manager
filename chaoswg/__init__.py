@@ -5,10 +5,11 @@ from flask_babel import Babel
 from flask_bootstrap import Bootstrap, WebCDN
 from flask_login import LoginManager, login_user, logout_user, login_required, current_user
 
-from chaoswg.forms import LoginForm, CreateTaskForm, CustomTaskForm
-from chaoswg.models import init_database, create_tables, User, Task, History, insert_testdata
 from chaoswg.admin import init_admin
+from chaoswg.forms import LoginForm, CreateTaskForm, CustomTaskForm
 from chaoswg.helpers import format_datetime_custom, format_timedelta_custom
+from chaoswg.models import init_database, create_tables, User, Task, History
+from chaoswg.scheduler import TaskScheduler
 
 # init app and load config
 app = Flask(__name__)
@@ -18,8 +19,8 @@ app.config.from_pyfile('../config.py')
 # init DB
 init_database(app)
 create_tables()
-# TODO remove in production
-# insert_testdata()
+# Comment out in production
+# insert_testdata(database)
 
 # init login manager
 login_manager = LoginManager()
@@ -40,6 +41,15 @@ app.jinja_env.filters['timedelta'] = format_timedelta_custom
 
 # init admin interface
 init_admin(app)
+
+# Create the task scheduler thread
+task_scheduler = TaskScheduler()
+
+
+@app.before_first_request
+def start_task_scheduler():
+    # Start the task scheduler thread only once even if app is in debug mode
+    task_scheduler.start()
 
 
 @app.route('/')
@@ -107,7 +117,8 @@ def create_task():
 
     if form.validate_on_submit():
         task, created = Task.get_or_create(task=form.task.data, defaults={'base_points': form.base_points.data,
-                                                                          'time_factor': form.time_factor.data})
+                                                                          'time_factor': form.time_factor.data,
+                                                                          'schedule_days': form.schedule_days.data})
         if not created:
             # TODO return error message, task exists
             return '', 403

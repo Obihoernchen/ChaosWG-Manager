@@ -1,8 +1,8 @@
 from flask import redirect
 from flask_admin import Admin, AdminIndexView, expose
-from flask_admin.menu import MenuLink
 from flask_admin.contrib.peewee import ModelView
 from flask_admin.form import SecureForm
+from flask_admin.menu import MenuLink
 from flask_login import current_user
 
 from chaoswg.models import User, Task, History

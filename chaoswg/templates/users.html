@@ -9,20 +9,20 @@
             <h2>Users</h2>
             <table class="table table-striped table-responsive">
                 <thead>
-                <tr>
-                    <th>User</th>
-                    <th>Points</th>
-                    <th>Last update</th>
-                </tr>
+                    <tr>
+                        <th>User</th>
+                        <th>Points</th>
+                        <th>Last update</th>
+                    </tr>
                 </thead>
                 <tbody>
-                {% for u in users %}
-                <tr>
-                    <td>{{u.username}}</td>
-                    <td>{{u.points}}</td>
-                    <td>{{u.last_update|timedelta}}</td>
-                </tr>
-                {% endfor %}
+                    {% for u in users %}
+                    <tr>
+                        <td>{{u.username}}</td>
+                        <td>{{u.points}}</td>
+                        <td>{{u.last_update|timedelta}}</td>
+                    </tr>
+                    {% endfor %}
                 </tbody>
             </table>
         </div>

@@ -6,16 +6,18 @@ from flask_bootstrap import Bootstrap, WebCDN
 from flask_login import LoginManager, login_user, logout_user, login_required, current_user
 
 from chaoswg.admin import init_admin
-from chaoswg.forms import LoginForm, CreateTaskForm, CustomTaskForm
+from chaoswg.forms import RegisterForm, LoginForm, CreateTaskForm, CustomTaskForm
 from chaoswg.helpers import format_datetime_custom, format_timedelta_custom
 from chaoswg.models import init_database, create_tables, User, Task, History
 from chaoswg.scheduler import TaskScheduler
+
 # from test.testdata import insert_testdata
 
 # init app and load config
 app = Flask(__name__)
 # read config.py
 app.config.from_pyfile('../config.py')
+
 
 # init DB
 database = init_database(app)
@@ -56,6 +58,24 @@ def start_task_scheduler():
 @app.route('/')
 def index():
     return render_template('index.html', usernames=User.get_usernames())
+
+
+@app.route('/register', methods=['GET', 'POST'])
+def register():
+    form = RegisterForm()
+
+    if form.validate_on_submit():
+        if app.config['INVITE_KEY'] != form.invite_key.data:
+            # TODO return error message, wrong invite key
+            return '', 403
+        if User.register(form.name.data, form.password.data):
+            # TODO return success message
+            return redirect('/login')
+        else:
+            # TODO return error message, user exists
+            return '', 403
+
+    return render_template('register.html', form=form)
 
 
 @app.route('/login', methods=['GET', 'POST'])

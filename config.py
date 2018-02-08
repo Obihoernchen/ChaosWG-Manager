@@ -25,3 +25,6 @@ CSRF_SESSION_KEY = "tBhlIlMKzzqK2ml5Dh4bq3D25lA53NZO"
 
 # Secret key for signing cookies
 SECRET_KEY = "Iq8IBfxayJGLFa70XDHIVqF9g0mLaqv4"
+
+# Invite key is needed for registration
+INVITE_KEY = "IWantToHelpNow!!!FZZ§(AfajDJD2djdaFA29da"

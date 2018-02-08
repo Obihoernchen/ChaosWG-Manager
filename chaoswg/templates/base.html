@@ -62,9 +62,13 @@
                 <li{% if active_page == "login" %} class="active"{% endif %}>
                     <a href="/login"><span class="glyphicon glyphicon-log-in"></span> Login</a>
                 </li>
+                <li{% if active_page == "register" %} class="active"{% endif %}>
+                    <a href="/register"><span class="glyphicon glyphicon-new-window"></span> Register</a>
+                </li>
                 {% else %}
                 <li>
                     <a href="/admin"><span class="glyphicon glyphicon-cog"></span> Admin</a>
+                </li>
                 <li>
                     <a href="/logout"><span class="glyphicon glyphicon-log-out"></span> Logout {{current_user.username}}</a>
                 </li>

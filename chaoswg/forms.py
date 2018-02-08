@@ -1,6 +1,14 @@
 from flask_wtf import FlaskForm
 from wtforms.fields import StringField, PasswordField, IntegerField, FloatField, SubmitField
-from wtforms.validators import InputRequired, NumberRange, Optional
+from wtforms.validators import InputRequired, NumberRange, Optional, Length
+
+
+class RegisterForm(FlaskForm):
+    name = StringField(u'Username', validators=[InputRequired(), Length(1, 255)])
+    password = PasswordField(u'Password', validators=[InputRequired(), Length(8, 255)])
+    invite_key = StringField(u'Invite Key', validators=[InputRequired()])
+
+    submit = SubmitField(u'Register')
 
 
 class LoginForm(FlaskForm):

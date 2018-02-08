@@ -55,6 +55,13 @@ class User(ModelBase):
             result.add(user.username)
         return result
 
+    @classmethod
+    def register(cls, username, password):
+        if cls.get_by_name(username):
+            return False
+        if User.create(username=username, password=generate_password_hash(password)):
+            return True
+
     def set_password(self, password):
         self.password = generate_password_hash(password)
 

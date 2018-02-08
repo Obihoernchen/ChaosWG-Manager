@@ -19,8 +19,12 @@ DATABASE = os.path.join(BASE_DIR, 'chaoswg.sqlite')
 # Enable protection agains *Cross-site Request Forgery (CSRF)*
 CSRF_ENABLED = True
 
-# Use a secure, unique and absolutely secret key for
-# signing the data.
+
+##########################################################
+# Overwrite the following default keys in user-config.py #
+##########################################################
+
+# Use a secure, unique and absolutely secret key for signing the data
 CSRF_SESSION_KEY = "tBhlIlMKzzqK2ml5Dh4bq3D25lA53NZO"
 
 # Secret key for signing cookies

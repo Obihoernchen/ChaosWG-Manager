@@ -105,3 +105,6 @@ ENV/
 
 # Database
 chaoswg.sqlite
+
+# Custom config
+custom-config.py

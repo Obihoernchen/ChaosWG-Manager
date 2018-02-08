@@ -15,9 +15,10 @@ from chaoswg.scheduler import TaskScheduler
 
 # init app and load config
 app = Flask(__name__)
-# read config.py
-app.config.from_pyfile('../config.py')
-
+# read ../default-config.py
+app.config.from_pyfile('../default-config.py')
+# overwrite with custom config in ../custom-config.py
+app.config.from_pyfile('../custom-config.py', silent=True)
 
 # init DB
 database = init_database(app)

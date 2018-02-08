@@ -16,7 +16,7 @@ pip3 install -r requirements --upgrade
 ```
 or use a virtualenv.
 
-Afterwards you should edit the secret keys in `config.py`.
+Afterwards you should create a `custom-config.py` file to overwrite the default secret keys of `config.py`.
 
 ### Run
 For debugging/testing purposes simply execute `python3 run.py`.

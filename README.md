@@ -26,7 +26,7 @@ For production use a proper WSGI server like Apache + mod_wsgi, Gunicorn, uWSGI,
 This is a configuration example for Apache with mod_wsgi.
 Edit user, group and paths, and put the following in a VirtualHost section.
 ```
-WSGIDaemonProcess chaoswg user=<your_user> group=<your_group> threads=5 python-path=/srv/ChaosWG-Manager
+WSGIDaemonProcess chaoswg user=<your_user> group=<your_group> threads=1 python-path=/srv/ChaosWG-Manager
 WSGIScriptAlias / /srv/ChaosWG-Manager/chaoswg.wsgi
 <Directory /srv/ChaosWG-Manager>
     WSGIProcessGroup chaoswg

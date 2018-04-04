@@ -4,10 +4,14 @@ function process_btn_press(element, state) {
     var taskid = popover.prev().data('taskid');
     var data = {id: taskid, state: state};
     // send actual HTTP POST request to app
-    // TODO: this is bad but whatever...
-    $.post('/set_task_state', data, location.reload());
-    // TODO error handling
-    //popover.popover('hide');
+    $.post('/set_task_state', data)
+        .done(function() {
+            // Reload page after new state was set
+            // TODO reloading the whole page is bad but whatever...
+            location.reload();
+        });
+    // TODO error handling?
+    popover.popover('hide');
 }
 
 // Init popovers

@@ -12,7 +12,7 @@ It's a python3 WSGI app built with Flask, Peewee and Bootstrap.
 ### Requirements
 Install requirements with
 ```
-pip3 install -r requirements --upgrade
+pip3 install -r requirements.txt --upgrade
 ```
 or use a virtualenv.
 

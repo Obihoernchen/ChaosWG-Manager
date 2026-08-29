@@ -10,16 +10,39 @@ const BTN_GROUP_HTML =
     '<button type="button" class="btn btn-success btn-done">Done</button>' +
     '</div>';
 
+// Bootstrap 5 sanitizes html:true popover content and removes every element
+// whose tag is not in the allow-list (Bootstrap 5.3: js/src/util/sanitizer.js).
+// The built-in DefaultAllowlist has no `button`, so all three state buttons
+// were silently stripped -> the popover opened, but was empty.
+// This is a copy of Bootstrap's DefaultAllowlist with `button` added.
+const ALLOW_LIST = {
+    '*': ['class', 'dir', 'id', 'lang', 'role', /^aria-[\w-]*$/i],
+    a: ['target', 'href', 'title', 'rel'],
+    area: [], b: [], br: [], col: [], code: [], dd: [], div: [], dl: [], dt: [],
+    em: [], hr: [], h1: [], h2: [], h3: [], h4: [], h5: [], h6: [], i: [],
+    img: ['src', 'srcset', 'alt', 'title', 'width', 'height'],
+    li: [], ol: [], p: [], pre: [], s: [], small: [], span: [], sub: [], sup: [],
+    strong: [], u: [], ul: [],
+    button: []
+};
+
 // One Popover instance per task row
 const popovers = new Map(); // trigger element -> Popover instance
 let openTrigger = null; // trigger whose popover is open (only one at a time)
 
 document.querySelectorAll('[data-bs-toggle="popover"]').forEach(el => {
     const inst = new Popover(el, {
-        placement: 'bottom auto',
+        // Popper v2 (Bootstrap 5) only accepts 'top'|'right'|'bottom'|'left' plus
+        // optional '-start'/'-end'. The old Bootstrap 4 string 'bottom auto' made
+        // popper's offset modifier read data['bottom auto'] -> undefined and throw
+        // "Cannot read properties of undefined (reading 'x')", leaving the popover
+        // unpositioned (empty popup in the corner). 'bottom' + popper's flip
+        // modifier gives the same "bottom, flip if no space" behaviour.
+        placement: 'bottom',
         html: true,
         trigger: 'click',
-        content: BTN_GROUP_HTML
+        content: BTN_GROUP_HTML,
+        allowList: ALLOW_LIST
     });
     popovers.set(el, inst);
 
@@ -56,8 +79,9 @@ document.addEventListener('click', e => {
             return;
         }
     }
-    // close button inside the popover title
-    if (e.target.closest('.popover .btn-close')) {
+    // close button inside the popover title (openTrigger is null until the
+    // first 'shown.bs.popover', so guard against a click in that window)
+    if (openTrigger && e.target.closest('.popover .btn-close')) {
         popovers.get(openTrigger).hide();
     }
 });

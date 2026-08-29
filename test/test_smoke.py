@@ -53,12 +53,29 @@ def register_and_login(client, app, name="alice"):
     assert r.headers["Location"] == "/tasks"
 
 
+def db_query(func):
+    """Run a DB query in the test thread and close the connection afterwards.
+
+    The app opens one connection per request (FlaskDB before_request) and
+    closes it in teardown. A query executed here, outside a request, would
+    leave the test-thread connection open, and peewee 3.x's connect() then
+    raises "Connection already opened" on the next request (peewee 2.x used
+    to silently reuse the open connection).
+    """
+    from chaoswg.models import db_wrapper
+    try:
+        return func()
+    finally:
+        db_wrapper.database.close()
+
+
 def test_smoke(client, app):
     register_and_login(client, app)
 
-    # All pages render
+    # All pages render (note: /admin/ is the canonical URL; Flask 308s
+    # /admin there because the flask-admin index view is exposed at '/')
     for path in ["/", "/tasks", "/users", "/history",
-                 "/create_task", "/do_custom_task", "/login", "/admin"]:
+                 "/create_task", "/do_custom_task", "/login", "/admin/"]:
         r = client.get(path)
         assert r.status_code == 200, f"GET {path} -> {r.status_code}"
 
@@ -78,11 +95,11 @@ def test_smoke(client, app):
 
     # Change task state via the AJAX endpoint
     from chaoswg.models import Task
-    task = Task.get(Task.task == "Dishes")
+    task = db_query(lambda: Task.get(Task.task == "Dishes"))
     r = client.post("/set_task_state", data={"id": str(task.id), "state": "2"})
     assert r.status_code == 204, r.data
-    task = Task.get(Task.id == task.id)
-    assert task.state == Task.DONE
+    new_state = db_query(lambda: Task.get(Task.id == task.id).state)
+    assert new_state == Task.DONE
 
     # JSON endpoints
     for path in ["/json/users", "/json/history", "/json/history/alice"]:
@@ -94,7 +111,7 @@ def test_smoke(client, app):
 def test_login_required(client, app):
     # Unauthenticated users are redirected to the login page
     for path in ["/tasks", "/users", "/history",
-                 "/create_task", "/do_custom_task", "/admin"]:
+                 "/create_task", "/do_custom_task", "/admin/"]:
         r = client.get(path)
         assert r.status_code == 302, path
         assert "/login" in r.headers["Location"]

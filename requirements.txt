@@ -1,14 +1,14 @@
-flask
-flask-bootstrap
-Flask-babel
-flask-login
-flask-wtf
-flask-admin
+flask==3.1.3
+flask-bootstrap==3.3.7.1
+Flask-babel==4.0.0
+flask-login==0.6.3
+flask-wtf==1.2.2
+flask-admin==1.6.1
 
-peewee
-wtf-peewee
+peewee==3.19.0
+wtf-peewee==3.0.7
 
-wtforms
-werkzeug
+wtforms==3.1.2
+werkzeug==3.1.8
 
-schedule
+schedule==0.6.0

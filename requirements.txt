@@ -5,8 +5,8 @@ flask-login==0.6.3
 flask-wtf==1.2.2
 flask-admin==1.6.1
 
-peewee==3.19.0
-wtf-peewee==3.0.7
+peewee==4.4.0
+wtf-peewee==3.2.1
 
 wtforms==3.1.2
 werkzeug==3.1.8

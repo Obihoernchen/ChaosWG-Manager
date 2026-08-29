@@ -180,7 +180,8 @@ class History(ModelBase):
     task = CharField()
     user = ForeignKeyField(User)
     points = SmallIntegerField()
-    time = DateTimeField(index=True, default=datetime.utcnow())
+    # default is the callable, not the result of a call at import time
+    time = DateTimeField(index=True, default=datetime.utcnow)
 
     @classmethod
     def get_user_history(cls, user):

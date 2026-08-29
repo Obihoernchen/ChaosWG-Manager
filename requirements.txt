@@ -11,4 +11,4 @@ wtf-peewee==3.2.1
 wtforms==3.2.2
 werkzeug==3.1.8
 
-schedule==0.6.0
+schedule==1.2.2

@@ -2,7 +2,7 @@ from datetime import datetime
 
 from flask import Flask, render_template, request, redirect, jsonify
 from flask_babel import Babel
-from flask_bootstrap import Bootstrap, WebCDN
+from flask_bootstrap import Bootstrap5
 from flask_login import LoginManager, login_user, logout_user, login_required, current_user
 
 from chaoswg.admin import init_admin
@@ -30,12 +30,9 @@ create_tables()
 login_manager = LoginManager()
 login_manager.init_app(app)
 
-# Enable bootstrap support
-Bootstrap(app)
-# jQuery 3 instead of 1
-app.extensions['bootstrap']['cdns']['jquery'] = WebCDN(
-    '//cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/'
-)
+# Enable bootstrap 5 support (Bootstrap-Flask 2.x; CSS/JS from CDN by default,
+# no jQuery)
+Bootstrap5(app)
 
 # Enable babel support
 app.babel = Babel(app, default_timezone='Europe/Berlin')

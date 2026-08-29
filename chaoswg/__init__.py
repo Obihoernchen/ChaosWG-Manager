@@ -81,13 +81,13 @@ def register():
     if form.validate_on_submit():
         if app.config['INVITE_KEY'] != form.invite_key.data:
             # TODO return error message, wrong invite key
-            return '', 403
+            return make_response('', 403)
         if User.register(form.name.data, form.password.data):
             # TODO return success message
             return redirect('/login')
         else:
             # TODO return error message, user exists
-            return '', 403
+            return make_response('', 403)
 
     return render_template('register.html', form=form)
 
@@ -156,7 +156,7 @@ def create_task():
                                                                           'schedule_days': form.schedule_days.data})
         if not created:
             # TODO return error message, task exists
-            return '', 403
+            return make_response('', 403)
 
         # TODO return success message
         return redirect('/tasks')
@@ -206,7 +206,7 @@ def set_task_state():
         Task.set_state(task_id, state, user_id)
     else:
         # TODO message
-        return '', 403
+        return make_response('', 403)
     # New state was set
     return make_response('', 204)
 

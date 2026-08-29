@@ -1,6 +1,6 @@
 from datetime import datetime, timezone
 
-from flask_babel import format_datetime, format_timedelta
+from flask_babel import format_datetime, format_timedelta, to_user_timezone
 
 
 def utcnow():
@@ -34,5 +34,25 @@ def format_datetime_custom(value):
 def format_timedelta_custom(value):
     if value is None:
         return 'Not yet'
+    then = make_aware(value)
     now = utcnow()
-    return format_timedelta(make_aware(value) - now, granularity='day', add_direction=True)
+    if _same_day(then, now):
+        return 'today'
+    return format_timedelta(then - now, granularity='day', add_direction=True)
+
+
+def _same_day(then, now):
+    """
+    True if both instants fall on the same calendar day in the timezone
+    datetimes are displayed in (to_user_timezone, Europe/Berlin by
+    default). Needed because babel's day granularity rounds anything
+    under 24 h to "1 day".
+
+    Falls back to UTC when there is no app context, e.g. in tests.
+    """
+    try:
+        then = to_user_timezone(then)
+        now = to_user_timezone(now)
+    except RuntimeError:
+        pass
+    return then.date() == now.date()

@@ -1,6 +1,6 @@
 from datetime import datetime, timezone
 
-from flask import Flask, render_template, request, redirect, jsonify
+from flask import Flask, render_template, request, redirect, jsonify, make_response
 from flask.json.provider import DefaultJSONProvider
 from flask_babel import Babel
 from flask_bootstrap import Bootstrap5
@@ -208,7 +208,7 @@ def set_task_state():
         # TODO message
         return '', 403
     # New state was set
-    return '', 204
+    return make_response('', 204)
 
 
 #########################

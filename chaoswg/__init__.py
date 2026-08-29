@@ -1,13 +1,14 @@
-from datetime import datetime
+from datetime import datetime, timezone
 
 from flask import Flask, render_template, request, redirect, jsonify
+from flask.json.provider import DefaultJSONProvider
 from flask_babel import Babel
 from flask_bootstrap import Bootstrap5
 from flask_login import LoginManager, login_user, logout_user, login_required, current_user
 
 from chaoswg.admin import init_admin
 from chaoswg.forms import RegisterForm, LoginForm, CreateTaskForm, CustomTaskForm
-from chaoswg.helpers import format_datetime_custom, format_timedelta_custom
+from chaoswg.helpers import format_datetime_custom, format_timedelta_custom, utcnow
 from chaoswg.models import init_database, create_tables, User, Task, History
 from chaoswg.scheduler import TaskScheduler
 
@@ -15,6 +16,26 @@ from chaoswg.scheduler import TaskScheduler
 
 # init app and load config
 app = Flask(__name__)
+
+
+class UtcJsonProvider(DefaultJSONProvider):
+    """
+    jsonify() fallback for datetimes read from SQLite.
+
+    Legacy rows and rows written through forms come back from peewee as
+    naive datetimes, but they are stored as UTC, so http_date() would
+    mislabel their UTC offset. Treat naive as UTC (app-written values
+    are already aware and pass through unchanged).
+    """
+
+    @staticmethod
+    def default(o):
+        if isinstance(o, datetime) and o.tzinfo is None:
+            o = o.replace(tzinfo=timezone.utc)
+        return DefaultJSONProvider.default(o)
+
+
+app.json = UtcJsonProvider(app)
 # read ../default-config.py
 app.config.from_pyfile('../default-config.py')
 # overwrite with custom config in ../custom-config.py
@@ -226,7 +247,7 @@ def get_history_json():
     # same point count till today
     for user in result:
         result[user].append({
-            'time': datetime.utcnow(),
+            'time': utcnow(),
             'points': 0
         })
 

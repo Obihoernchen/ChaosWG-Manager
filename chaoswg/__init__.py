@@ -172,10 +172,11 @@ def get_tasks():
     todo = [t for t in tasks if t.state == Task.TODO]
     done = [t for t in tasks if t.state == Task.DONE]
 
+    total = len(tasks)
     progress = {
-        'backlog': len(backlog) / len(tasks) * 100,
-        'todo': len(todo) / len(tasks) * 100,
-        'done': len(done) / len(tasks) * 100
+        'backlog': len(backlog) / total * 100 if total else 0,
+        'todo': len(todo) / total * 100 if total else 0,
+        'done': len(done) / total * 100 if total else 0
     }
 
     return render_template('tasks.html', backlog=backlog, todo=todo, done=done, progress=progress,

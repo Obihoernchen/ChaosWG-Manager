@@ -1,76 +1,75 @@
-{% extends "bootstrap/base.html" %}
-{% block title %}ChaosWG Manager{% endblock %}
-
-{% block metas %}
-{{super()}}
-<meta name="apple-mobile-web-app-title" content="ChaosWG">
-<meta name="application-name" content="ChaosWG">
-<meta name="msapplication-TileColor" content="#da532c">
-<meta name="msapplication-config" content="{{url_for('.static', filename='ico/browserconfig.xml')}}">
-<meta name="theme-color" content="#ffffff">
-{% endblock %}
-
-{% block styles %}
-{{super()}}
-<link rel="stylesheet" href="{{url_for('.static', filename='css/style.css')}}">
-<link rel="apple-touch-icon" sizes="180x180" href="{{url_for('.static', filename='ico/apple-touch-icon.png')}}">
-<link rel="icon" type="image/png" sizes="32x32" href="{{url_for('.static', filename='ico/favicon-32x32.png')}}">
-<link rel="icon" type="image/png" sizes="16x16" href="{{url_for('.static', filename='ico/favicon-16x16.png')}}">
-<link rel="manifest" href="{{url_for('.static', filename='ico/site.webmanifest')}}">
-<link rel="mask-icon" href="{{url_for('.static', filename='ico/safari-pinned-tab.svg')}}" color="#5bbad5">
-<link rel="shortcut icon" href="{{url_for('.static', filename='ico/favicon.ico')}}">
-{% endblock %}
-
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{% block title %}ChaosWG Manager{% endblock %}</title>
+    {% block metas %}
+    <meta name="apple-mobile-web-app-title" content="ChaosWG">
+    <meta name="application-name" content="ChaosWG">
+    <meta name="msapplication-TileColor" content="#da532c">
+    <meta name="msapplication-config" content="{{url_for('.static', filename='ico/browserconfig.xml')}}">
+    <meta name="theme-color" content="#ffffff">
+    {% endblock %}
+    {{ bootstrap.load_css() }}
+    {{ bootstrap.load_icon_font_css() }}
+    {% block styles %}
+    <link rel="stylesheet" href="{{url_for('.static', filename='css/style.css')}}">
+    <link rel="apple-touch-icon" sizes="180x180" href="{{url_for('.static', filename='ico/apple-touch-icon.png')}}">
+    <link rel="icon" type="image/png" sizes="32x32" href="{{url_for('.static', filename='ico/favicon-32x32.png')}}">
+    <link rel="icon" type="image/png" sizes="16x16" href="{{url_for('.static', filename='ico/favicon-16x16.png')}}">
+    <link rel="manifest" href="{{url_for('.static', filename='ico/site.webmanifest')}}">
+    <link rel="mask-icon" href="{{url_for('.static', filename='ico/safari-pinned-tab.svg')}}" color="#5bbad5">
+    <link rel="shortcut icon" href="{{url_for('.static', filename='ico/favicon.ico')}}">
+    {% endblock %}
+</head>
+<body>
 {% block navbar %}
-<nav class="navbar navbar-inverse navbar-fixed-top">
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
     <div class="container-fluid">
-        <div class="navbar-header">
-            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navBar">
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-            </button>
-            <a class="navbar-brand" href="/">ChaosWG Manager</a>
-        </div>
+        <a class="navbar-brand" href="/">ChaosWG Manager</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navBar"
+                aria-controls="navBar" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
         <div class="collapse navbar-collapse" id="navBar">
+            {% set active_page = active_page|default('index') %}
             {% if current_user.is_authenticated %}
-            <ul class="nav navbar-nav">
-                {% set active_page = active_page|default('index') %}
-                <li{% if active_page == "tasks" %} class="active"{% endif %}>
-                    <a href="/tasks"><span class="glyphicon glyphicon-check"></span> Tasks</a>
+            <ul class="navbar-nav me-auto">
+                <li class="nav-item{% if active_page == "tasks" %} active{% endif %}">
+                    <a class="nav-link" href="/tasks"><span class="bi bi-check-lg"></span> Tasks</a>
                 </li>
-                <li{% if active_page == "users" %} class="active"{% endif %}>
-                    <a href="/users"><span class="glyphicon glyphicon-user"></span> Users</a>
+                <li class="nav-item{% if active_page == "users" %} active{% endif %}">
+                    <a class="nav-link" href="/users"><span class="bi bi-person"></span> Users</a>
                 </li>
-                <li class="dropdown{% if active_page == "history" %} active{% endif %}">
-                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true"
-                       aria-expanded="false"><span class="glyphicon glyphicon-time"></span> History <span
-                       class="caret"></span></a>
+                <li class="nav-item dropdown{% if active_page == "history" %} active{% endif %}">
+                    <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown"
+                       aria-expanded="false"><span class="bi bi-clock-history"></span> History</a>
                     <ul class="dropdown-menu">
-                        <li><a href="/history">Overall History</a></li>
-                        <li role="separator" class="divider"></li>
-                        <li class="dropdown-header">User History</li>
+                        <li><a class="dropdown-item" href="/history">Overall History</a></li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li><h6 class="dropdown-header">User History</h6></li>
                         {% for u in usernames %}
-                        <li><a href="/history/{{u}}">{{u}}</a></li>
+                        <li><a class="dropdown-item" href="/history/{{u}}">{{u}}</a></li>
                         {% endfor %}
                     </ul>
                 </li>
             </ul>
             {% endif %}
-            <ul class="nav navbar-nav navbar-right">
+            <ul class="navbar-nav ms-auto">
                 {% if not current_user.is_authenticated %}
-                <li{% if active_page == "login" %} class="active"{% endif %}>
-                    <a href="/login"><span class="glyphicon glyphicon-log-in"></span> Login</a>
+                <li class="nav-item{% if active_page == "login" %} active{% endif %}">
+                    <a class="nav-link" href="/login"><span class="bi bi-box-arrow-in-right"></span> Login</a>
                 </li>
-                <li{% if active_page == "register" %} class="active"{% endif %}>
-                    <a href="/register"><span class="glyphicon glyphicon-new-window"></span> Register</a>
+                <li class="nav-item{% if active_page == "register" %} active{% endif %}">
+                    <a class="nav-link" href="/register"><span class="bi bi-box-arrow-up-right"></span> Register</a>
                 </li>
                 {% else %}
-                <li>
-                    <a href="/admin"><span class="glyphicon glyphicon-cog"></span> Admin</a>
+                <li class="nav-item">
+                    <a class="nav-link" href="/admin/"><span class="bi bi-gear"></span> Admin</a>
                 </li>
-                <li>
-                    <a href="/logout"><span class="glyphicon glyphicon-log-out"></span> Logout {{current_user.username}}</a>
+                <li class="nav-item">
+                    <a class="nav-link" href="/logout"><span class="bi bi-box-arrow-right"></span> Logout {{current_user.username}}</a>
                 </li>
                 {% endif %}
             </ul>
@@ -78,3 +77,10 @@
     </div>
 </nav>
 {% endblock %}
+
+{% block content %}{% endblock %}
+
+{{ bootstrap.load_js() }}
+{% block scripts %}{% endblock %}
+</body>
+</html>

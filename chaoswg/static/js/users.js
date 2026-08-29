@@ -30,11 +30,11 @@ fetch('/json/users')
                     display: false
                 },
                 scales: {
-                    yAxes: [{
-                        ticks: {
-                            beginAtZero: true
-                        }
-                    }]
+                    // v3+: named scale objects (x/y) instead of xAxes/yAxes
+                    // arrays; beginAtZero moved from ticks to the scale level
+                    y: {
+                        beginAtZero: true
+                    }
                 }
             }
         });

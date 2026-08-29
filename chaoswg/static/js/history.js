@@ -5,16 +5,19 @@ var config = {
         datasets: []
     },
     options: {
-        showLines: true,
+        // Chart.js v3+ renamed the v2 scatter option showLines to showLine
+        showLine: true,
         animation: {
             duration: 3000
         },
         scales: {
-            xAxes: [{
+            // v3+ uses named scale objects (x/y) instead of xAxes/yAxes arrays;
+            // scaleLabel became title
+            x: {
                 type: 'time',
-                scaleLabel: {
+                title: {
                     display: true,
-                    labelString: 'Date'
+                    text: 'Date'
                 },
                 time: {
                     unit: 'day',
@@ -22,16 +25,14 @@ var config = {
                         day: 'DD.MM.YY'
                     }
                 }
-            }],
-            yAxes: [{
-                scaleLabel: {
+            },
+            y: {
+                title: {
                     display: true,
-                    labelString: 'Points'
+                    text: 'Points'
                 },
-                ticks: {
-                    beginAtZero: true
-                }
-            }]
+                beginAtZero: true
+            }
         }
     }
 };
@@ -71,7 +72,8 @@ fetch('/json/history')
                     backgroundColor: color,
                     data: points,
                     fill: false,
-                    steppedLine: true
+                    // v3+ renamed the v2 dataset option steppedLine to stepped
+                    stepped: true
                 };
                 config.data.datasets.push(dataset);
 

@@ -16,7 +16,7 @@ fetch('/json/history/' + username)
         }
         // Chart.js v4 time scales want {x, y} data points (v2 could also use a
         // labels array). x is the HTTP-date string from the JSON endpoint;
-        // chartjs-adapter-moment parses it with moment.
+        // js/chart-datetime-adapter.js parses it with native Date (no moment).
         var data = [];
         var point_sum = 0;
         // reverse the order to be old --> new

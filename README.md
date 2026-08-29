@@ -3,15 +3,15 @@
 
 ChaosWG-Manager is a living community planner.
 
-It's a Python 3.12+ WSGI app built with Flask 3, Peewee 4 and Bootstrap 5
+It's a Python 3 WSGI app built with Flask 3, Peewee 4 and Bootstrap 5
 (via [Bootstrap-Flask](https://github.com/greyli/bootstrap-flask)).
 
 ![Screenshot](Screenshot.png)
 
 ## Installation
 ### Requirements
-Python **3.10+** is required (3.12+ recommended — the pinned
-flask-admin/wtforms versions need it). Use a virtualenv:
+Python **3.10+** is required (the pinned flask-admin/WTForms/Flask-WTF
+releases do not support older interpreters). Use a virtualenv:
 ```
 python3 -m venv venv
 venv/bin/pip install -r requirements.txt

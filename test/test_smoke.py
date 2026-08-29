@@ -59,9 +59,9 @@ def db_query(func):
 
     The app opens one connection per request (FlaskDB before_request) and
     closes it in teardown. A query executed here, outside a request, would
-    leave the test-thread connection open, and peewee 3.x's connect() then
-    raises "Connection already opened" on the next request (peewee 2.x used
-    to silently reuse the open connection).
+    leave the test-thread connection open, and peewee's connect() then
+    raises "Connection already opened" on the next request (verified with
+    peewee 4.4.0; the old app relied on the pre-3.x silent reuse).
     """
     from chaoswg.models import db_wrapper
     try:

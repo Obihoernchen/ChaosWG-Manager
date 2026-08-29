@@ -12,6 +12,7 @@ Run from the repository root:
 """
 
 import pathlib
+import re
 
 import pytest
 
@@ -115,3 +116,61 @@ def test_login_required(client, app):
         r = client.get(path)
         assert r.status_code == 302, path
         assert "/login" in r.headers["Location"]
+
+
+def _admin_csrf_token(client, path):
+    """Admin forms are flask-admin SecureForms (WTForms SessionCSRF), not
+    flask-wtf FlaskForms, so WTF_CSRF_ENABLED does not apply. A real browser
+    submits the hidden token; do the same here."""
+    r = client.get(path)
+    assert r.status_code == 200, path
+    m = re.search(r'name="csrf_token"[^>]*value="([^"]+)"', r.get_data(as_text=True))
+    assert m, f"no csrf token in {path}"
+    return m.group(1)
+
+
+def test_admin(client, app):
+    """flask-admin 2.x: the CRUD interface must keep working."""
+    register_and_login(client, app, name="bob")
+
+    from chaoswg.models import Task
+    task_id = db_query(lambda: Task.get(Task.task == "Dishes").id)
+
+    # Admin pages render for an authenticated user. Note: flask-admin 2.x
+    # moved the object id out of the path into a query parameter.
+    for path in ["/admin/", "/admin/task/", "/admin/user/", "/admin/history/",
+                 "/admin/task/new/", f"/admin/task/edit/?id={task_id}"]:
+        r = client.get(path)
+        assert r.status_code == 200, (path, r.status_code)
+
+    # Create a task through the admin interface
+    token = _admin_csrf_token(client, "/admin/task/new/")
+    r = client.post("/admin/task/new/", data={
+        "csrf_token": token,
+        "task": "Admin-created",
+        "base_points": "5",
+        "time_factor": "0",
+        "state": "0",
+        "todo_time": "",
+        "last_done": "",
+        "schedule_days": "",
+    })
+    assert r.status_code == 302, r.data
+    assert "/admin/task/" in r.headers["Location"]
+    new_id = db_query(lambda: Task.get(Task.task == "Admin-created").id)
+    assert db_query(lambda: Task.get(Task.id == new_id).base_points) == 5
+
+    # Edit it to TODO through the admin interface
+    token = _admin_csrf_token(client, f"/admin/task/edit/?id={new_id}")
+    r = client.post(f"/admin/task/edit/?id={new_id}", data={
+        "csrf_token": token,
+        "task": "Admin-created",
+        "base_points": "5",
+        "time_factor": "0",
+        "state": "1",
+        "todo_time": "",
+        "last_done": "",
+        "schedule_days": "",
+    })
+    assert r.status_code == 302, r.data
+    assert db_query(lambda: Task.get(Task.id == new_id).state) == Task.TODO

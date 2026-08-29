@@ -3,6 +3,7 @@ from flask_admin import Admin, AdminIndexView, expose
 from flask_admin.contrib.peewee import ModelView
 from flask_admin.form import SecureForm
 from flask_admin.menu import MenuLink
+from flask_admin.theme import Bootstrap4Theme
 from flask_login import current_user
 
 from chaoswg.models import User, Task, History
@@ -35,8 +36,9 @@ def init_admin(app):
     :param app:
     :return:
     """
+    # flask-admin 2.x: template_mode is gone, use a theme (default is BS4)
     admin = Admin(app, index_view=AuthAdminIndexView(), name='ChaosWG Manager Admin',
-                  template_mode='bootstrap3')
+                  theme=Bootstrap4Theme())
     admin.add_link(MenuLink(name='Back Home', url='/tasks'))
     admin.add_view(AuthAdminModelView(Task))
     admin.add_view(AuthAdminUserModelView(User))

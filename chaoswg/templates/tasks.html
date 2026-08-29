@@ -91,7 +91,7 @@
 
     <div class="row">
         <div class="col-sm-12">
-            <div class="progress">
+            <div class="progress" style="height: 1.5rem">
                 <div class="progress-bar bg-warning text-dark" role="progressbar" style="width:{{progress['backlog']}}%"
                      aria-valuenow="{{progress['backlog']|int}}" aria-valuemin="0" aria-valuemax="100">
                     {{progress['backlog']|int}}% Backlog
@@ -106,8 +106,8 @@
                 </div>
             </div>
 
-            <a href="create_task" class="btn btn-secondary">Create Task</a>
-            <a href="do_custom_task" class="btn btn-secondary">Do Custom Task</a>
+            <a href="create_task" class="btn btn-secondary mt-3">Create Task</a>
+            <a href="do_custom_task" class="btn btn-secondary ms-2 mt-3">Do Custom Task</a>
         </div>
     </div>
 </div>

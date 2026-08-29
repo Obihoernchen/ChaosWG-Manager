@@ -37,11 +37,8 @@ def init_admin(app):
     :return:
     """
     # flask-admin 2.x: template_mode is gone, use a theme (default is BS4)
-    # fluid=True: page wrapper uses container-fluid, so the admin header spans
-    # the full screen width like the main app header (otherwise Flask-Admin's
-    # Bootstrap4 theme wraps navbar AND content in a centered .container)
     admin = Admin(app, index_view=AuthAdminIndexView(), name='ChaosWG Manager Admin',
-                  theme=Bootstrap4Theme(fluid=True))
+                  theme=Bootstrap4Theme())
     admin.add_link(MenuLink(name='Back Home', url='/tasks'))
     admin.add_view(AuthAdminModelView(Task))
     admin.add_view(AuthAdminUserModelView(User))

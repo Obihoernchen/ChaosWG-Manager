@@ -1,4 +1,3 @@
-/* global $ */
 /* global Chart */
 var config = {
     type: 'scatter',
@@ -48,38 +47,40 @@ var chartColors = [
     'rgb(201, 203, 207)'
 ];
 
-$.getJSON('/json/history', function(result) {
-    // prepare data
-    var points = [];
-    var point_sum = 0;
-    for (var user in result) {
-        if (result.hasOwnProperty(user)) {
-            result[user].forEach(function(hist) {
-                point_sum += hist.points;
-                points.push({
-                    x: hist.time,
-                    y: point_sum
+fetch('/json/history')
+    .then(response => response.json())
+    .then(function(result) {
+        // prepare data
+        var points = [];
+        var point_sum = 0;
+        for (var user in result) {
+            if (result.hasOwnProperty(user)) {
+                result[user].forEach(function(hist) {
+                    point_sum += hist.points;
+                    points.push({
+                        x: hist.time,
+                        y: point_sum
+                    });
                 });
-            });
 
-            var color = chartColors[config.data.datasets.length % chartColors.length];
+                var color = chartColors[config.data.datasets.length % chartColors.length];
 
-            var dataset = {
-                label: user,
-                borderColor: color,
-                backgroundColor: color,
-                data: points,
-                fill: false,
-                steppedLine: true
-            };
-            config.data.datasets.push(dataset);
+                var dataset = {
+                    label: user,
+                    borderColor: color,
+                    backgroundColor: color,
+                    data: points,
+                    fill: false,
+                    steppedLine: true
+                };
+                config.data.datasets.push(dataset);
 
-            // reset for next iteration
-            points = [];
-            point_sum = 0;
+                // reset for next iteration
+                points = [];
+                point_sum = 0;
+            }
         }
-    }
 
-    var ctx = document.getElementById('historyChart').getContext('2d');
-    window.chart = new Chart(ctx, config);
-});
+        var ctx = document.getElementById('historyChart').getContext('2d');
+        window.chart = new Chart(ctx, config);
+    });

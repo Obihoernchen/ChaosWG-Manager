@@ -7,7 +7,8 @@
     <div class="row">
         <div class="col-sm-4">
             <h2>Backlog</h2>
-            <table class="table table-hover table-responsive">
+            <div class="table-responsive">
+                <table class="table table-hover">
                 <thead>
                     <tr>
                         <th>Task</th>
@@ -17,20 +18,22 @@
                 </thead>
                 <tbody>
                     {% for task in backlog %}
-                    <tr data-toggle="popover" title="{{task.task}} <a href='#' class='close' data-dismiss='alert'>×</a>"
-                        data-taskid="{{task.id}}">
+                    <tr data-bs-toggle="popover" data-taskid="{{task.id}}"
+                        title="{{task.task}} <span class='btn-close ms-1'></span>">
                         <td>{{task.task}}</td>
                         <td>{{task.base_points}}</td>
                         <td>{{task.last_done|timedelta}}</td>
                     </tr>
                     {% endfor %}
                 </tbody>
-            </table>
+                </table>
+            </div>
         </div>
 
         <div class="col-sm-4">
             <h2>ToDo</h2>
-            <table class="table table-hover table-responsive">
+            <div class="table-responsive">
+                <table class="table table-hover">
                 <thead>
                     <tr>
                         <th>Task</th>
@@ -40,12 +43,12 @@
                 </thead>
                 <tbody>
                     {% for task in todo %}
-                    <tr data-toggle="popover" title="{{task.task}} <a href='#' class='close' data-dismiss='alert'>×</a>"
+                    <tr data-bs-toggle="popover" data-taskid="{{task.id}}"
+                        title="{{task.task}} <span class='btn-close ms-1'></span>"
                         {% if task.points - task.base_points>= 2 %}
-                        class="danger"
+                        class="table-danger"
                         {% elif task.points - task.base_points >= 1 %}
-                        class="warning"{% endif %}
-                        data-taskid="{{task.id}}">
+                        class="table-warning"{% endif %}>
                         <td>{{task.task}}</td>
                         <td><strong>{{task.points}}</strong> {% if task.points != task.base_points
                             %}({{task.base_points}}){% endif %}
@@ -54,13 +57,14 @@
                     </tr>
                     {% endfor %}
                 </tbody>
-
-            </table>
+                </table>
+            </div>
         </div>
 
         <div class="col-sm-4">
             <h2>Done</h2>
-            <table class="table table-hover table-responsive">
+            <div class="table-responsive">
+                <table class="table table-hover">
                 <thead>
                     <tr>
                         <th>Task</th>
@@ -70,16 +74,16 @@
                 </thead>
                 <tbody>
                     {% for task in done %}
-                    <tr data-toggle="popover" title="{{task.task}} <a href='#' class='close' data-dismiss='alert'>×</a>"
-                        data-taskid="{{task.id}}">
+                    <tr data-bs-toggle="popover" data-taskid="{{task.id}}"
+                        title="{{task.task}} <span class='btn-close ms-1'></span>">
                         <td>{{task.task}}</td>
                         <td>{{task.base_points}}</td>
                         <td>{{task.last_done|timedelta}}</td>
                     </tr>
                     {% endfor %}
                 </tbody>
-
-            </table>
+                </table>
+            </div>
         </div>
     </div>
 
@@ -88,19 +92,22 @@
     <div class="row">
         <div class="col-sm-12">
             <div class="progress">
-                <div class="progress-bar progress-bar-warning" role="progressbar" style="width:{{progress['backlog']}}%">
+                <div class="progress-bar bg-warning text-dark" role="progressbar" style="width:{{progress['backlog']}}%"
+                     aria-valuenow="{{progress['backlog']|int}}" aria-valuemin="0" aria-valuemax="100">
                     {{progress['backlog']|int}}% Backlog
                 </div>
-                <div class="progress-bar progress-bar-danger" role="progressbar" style="width:{{progress['todo']}}%">
+                <div class="progress-bar bg-danger" role="progressbar" style="width:{{progress['todo']}}%"
+                     aria-valuenow="{{progress['todo']|int}}" aria-valuemin="0" aria-valuemax="100">
                     {{progress['todo']|int}}% ToDo
                 </div>
-                <div class="progress-bar progress-bar-success" role="progressbar" style="width:{{progress['done']}}%">
+                <div class="progress-bar bg-success" role="progressbar" style="width:{{progress['done']}}%"
+                     aria-valuenow="{{progress['done']|int}}" aria-valuemin="0" aria-valuemax="100">
                     {{progress['done']|int}}% Done
                 </div>
             </div>
 
-            <a href="create_task" class="btn btn-default" role="button">Create Task</a>
-            <a href="do_custom_task" class="btn btn-default" role="button">Do Custom Task</a>
+            <a href="create_task" class="btn btn-secondary">Create Task</a>
+            <a href="do_custom_task" class="btn btn-secondary">Do Custom Task</a>
         </div>
     </div>
 </div>

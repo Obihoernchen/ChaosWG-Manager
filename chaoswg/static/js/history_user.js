@@ -3,6 +3,17 @@ var username = document.getElementById('username').textContent;
 fetch('/json/history/' + username)
     .then(response => response.json())
     .then(function(result) {
+        // A user who has not done any task yet: the JSON is an empty array,
+        // result[0] is undefined and there is nothing to chart - show a hint
+        // in place of the canvas instead.
+        if (!result.length) {
+            var canvas = document.getElementById('historyUserChart');
+            var msg = document.createElement('p');
+            msg.className = 'text-muted';
+            msg.textContent = 'No tasks completed yet.';
+            canvas.parentNode.replaceChild(msg, canvas);
+            return;
+        }
         var time = [];
         var points = [];
         var point_sum = 0;

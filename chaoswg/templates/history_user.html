@@ -23,6 +23,10 @@
                         <td>{{i.task}}</td>
                         <td>{{i.points}}</td>
                     </tr>
+                    {% else %}
+                    <tr>
+                        <td colspan="3" class="text-muted">No tasks completed yet.</td>
+                    </tr>
                     {% endfor %}
                 </tbody>
                 </table>

@@ -109,6 +109,24 @@ def test_smoke(client, app):
         assert r.is_json, path
 
 
+def test_history_of_user_without_tasks(client, app):
+    """A user who has done no tasks yet must not break their history page.
+
+    /json/history/<username> then returns [] and history_user.js used to
+    crash on result[0].time ("Cannot read properties of undefined
+    (reading 'time')"). Both the JSON payload and the rendered empty state
+    are checked here."""
+    register_and_login(client, app, name="carol")
+
+    r = client.get("/json/history/carol")
+    assert r.status_code == 200
+    assert r.get_json() == []
+
+    r = client.get("/history/carol")
+    assert r.status_code == 200
+    assert "No tasks completed yet." in r.get_data(as_text=True)
+
+
 def test_login_required(client, app):
     # Unauthenticated users are redirected to the login page
     for path in ["/tasks", "/users", "/history",

@@ -46,14 +46,21 @@ document.querySelectorAll('[data-bs-toggle="popover"]').forEach(el => {
     });
     popovers.set(el, inst);
 
-    // Only one popover at a time: hide the others when one opens
+    // Only one popover at a time: hide the others when one opens.
+    // openTrigger is set as soon as the popover *starts* showing (not after
+    // the fade-in) so that a fast click on a state button inside the
+    // still-animating popover can already resolve its task id instead of
+    // crashing on a null openTrigger.
     el.addEventListener('show.bs.popover', () => {
+        openTrigger = el;
         popovers.forEach((other, trigger) => {
             if (trigger !== el) other.hide();
         });
     });
-    el.addEventListener('shown.bs.popover', () => {
-        openTrigger = el;
+    el.addEventListener('hidden.bs.popover', () => {
+        // a superseded popover finishing its fade-out must not clear the
+        // trigger of the popover that replaced it
+        if (openTrigger === el) openTrigger = null;
     });
 });
 
@@ -79,9 +86,21 @@ document.addEventListener('click', e => {
             return;
         }
     }
-    // close button inside the popover title (openTrigger is null until the
-    // first 'shown.bs.popover', so guard against a click in that window)
-    if (openTrigger && e.target.closest('.popover .btn-close')) {
+    if (!openTrigger) return;
+    // close button inside the popover title
+    if (e.target.closest('.popover .btn-close')) {
+        popovers.get(openTrigger).hide();
+        return;
+    }
+    // Bootstrap 5 popovers with trigger: 'click' do not close on outside
+    // clicks, so do it manually. Clicks inside the open popover (e.g. the
+    // state buttons) and on the trigger itself are ignored: the trigger
+    // already toggles the popover, and the state buttons need the popover
+    // to stay open while the request is sent.
+    const openPopover = document.querySelector('.popover.show');
+    if (openPopover
+        && !openPopover.contains(e.target)
+        && !openTrigger.contains(e.target)) {
         popovers.get(openTrigger).hide();
     }
 });

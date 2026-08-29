@@ -16,18 +16,18 @@ DATABASE = os.path.join(BASE_DIR, 'chaoswg.sqlite')
 # operations using the other.
 # THREADS_PER_PAGE = 2
 
-# Enable protection agains *Cross-site Request Forgery (CSRF)*
-CSRF_ENABLED = True
-
+# Note: form CSRF protection is enabled by default in Flask-WTF 1.x
+# (the old CSRF_ENABLED config switch was removed); tokens are signed with
+# SECRET_KEY (see below).
 
 ##########################################################
 # Overwrite the following default keys in user-config.py #
 ##########################################################
 
-# Use a secure, unique and absolutely secret key for signing the data
-CSRF_SESSION_KEY = "tBhlIlMKzzqK2ml5Dh4bq3D25lA53NZO"
+# CSRF tokens are signed with WTF_CSRF_SECRET_KEY or, as a fallback,
+# SECRET_KEY below (Flask-WTF 1.x no longer reads CSRF_SESSION_KEY).
 
-# Secret key for signing cookies
+# Secret key for signing cookies (and CSRF tokens)
 SECRET_KEY = "Iq8IBfxayJGLFa70XDHIVqF9g0mLaqv4"
 
 # Invite key is needed for registration

@@ -1,6 +1,9 @@
+import os
+import runpy
+import sys
 from datetime import datetime, timezone
 
-from flask import Flask, render_template, request, redirect, jsonify, make_response
+from flask import Flask, render_template, request, redirect, jsonify, make_response, send_file
 from flask.json.provider import DefaultJSONProvider
 from flask_babel import Babel
 from flask_bootstrap import Bootstrap5
@@ -41,6 +44,33 @@ app.config.from_pyfile('../default-config.py')
 # overwrite with custom config in ../custom-config.py
 app.config.from_pyfile('../custom-config.py', silent=True)
 
+# Flask-WTF 1.x signs CSRF tokens with SECRET_KEY, exactly like the session
+# and "remember me" cookies, so the default key shipped in
+# default-config.py is more than a bad habit: anyone who has read the public
+# repository can forge CSRF tokens and login cookies. default-config.py is
+# re-executed below (the dash in the filename makes it non-importable), so
+# this check stays correct even if the default key is ever rotated.
+def _secret_key_is_default(app, config_path):
+    try:
+        default_config = runpy.run_path(config_path, run_name='__secret_key_check__')
+    except OSError:
+        return False
+    return app.config.get('SECRET_KEY') == default_config.get('SECRET_KEY')
+
+
+if _secret_key_is_default(app, os.path.join(app.root_path, os.pardir, 'default-config.py')):
+    banner = "\n".join([
+        "!" * 70,
+        "INSECURE CONFIG: SECRET_KEY is still the default from default-config.py.",
+        "Session cookies and CSRF tokens are signed with this key, so they",
+        "can be forged by anyone who has read the public repository.",
+        "Generate a random key and set SECRET_KEY in custom-config.py!",
+        "!" * 70,
+    ])
+    banner += "\n"
+    app.logger.warning(banner)
+    print(banner, file=sys.stderr)
+
 # init DB
 database = init_database(app)
 create_tables()
@@ -64,9 +94,21 @@ app.jinja_env.filters['timedelta'] = format_timedelta_custom
 # init admin interface
 init_admin(app)
 
-# Create and start the task scheduler thread (once per process)
+# Create the task scheduler. Do NOT start it here: this module is imported
+# once per process, and under the Werkzeug reloader (debug=True) that
+# happens in both the parent (watchdog) process and the child that serves
+# requests - app.debug is not set yet at import time, so an import-time
+# guard cannot tell them apart. The entry points start it: run.py only in
+# the reloader's child process (WERKZEUG_RUN_MAIN), chaoswg.wsgi in every
+# production process.
 task_scheduler = TaskScheduler()
-task_scheduler.start()
+
+
+@app.route('/favicon.ico')
+def favicon():
+    # Browsers probe /favicon.ico at the root even when the templates link
+    # the icon from /static/ico/ (the admin area does not link it at all).
+    return send_file(os.path.join(app.static_folder, 'ico', 'favicon.ico'))
 
 
 @app.route('/')
@@ -107,7 +149,14 @@ def login():
 
 @login_manager.user_loader
 def load_user(user_id):
-    return User.get(User.id == user_id)
+    # A stale "remember me" cookie may point at a user that no longer
+    # exists in the database (or at a non-numeric id). Returning
+    # None (anonymous) keeps the site usable instead of raising
+    # UserDoesNotExist and 500ing every page until the cookie is cleared.
+    try:
+        return User.get_by_id(int(user_id))
+    except (User.DoesNotExist, ValueError):
+        return None
 
 
 @login_manager.unauthorized_handler

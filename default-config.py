@@ -7,8 +7,9 @@ DEBUG = False
 BASE_DIR = os.path.abspath(os.path.dirname(__file__))
 
 # Define the database - we are working with
-# SQLite for this example
-DATABASE = os.path.join(BASE_DIR, 'chaoswg.sqlite')
+# SQLite for this example (tests override the location via the
+# CHAOUSWG_DATABASE environment variable, see test/test_smoke.py)
+DATABASE = os.environ.get('CHAOUSWG_DATABASE', os.path.join(BASE_DIR, 'chaoswg.sqlite'))
 
 # Application threads. A common general assumption is
 # using 2 per available processor cores - to handle

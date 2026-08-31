@@ -9,3 +9,8 @@ import logging
 logging.basicConfig(stream=sys.stderr)
 
 from chaoswg import app as application
+from chaoswg import task_scheduler
+
+# Production entry point: start the scheduler here (once per process). The
+# dev entry point run.py starts it in the reloader's child process only.
+task_scheduler.start()

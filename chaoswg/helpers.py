@@ -1,6 +1,6 @@
 from datetime import datetime, timezone
 
-from flask_babel import format_datetime, format_timedelta, to_user_timezone
+from flask_babel import format_datetime, format_timedelta, gettext, to_user_timezone
 
 
 def utcnow():
@@ -37,7 +37,7 @@ def format_timedelta_custom(value):
     then = make_aware(value)
     now = utcnow()
     if _same_day(then, now):
-        return 'today'
+        return gettext('today')
     return format_timedelta(then - now, granularity='day', add_direction=True)
 
 

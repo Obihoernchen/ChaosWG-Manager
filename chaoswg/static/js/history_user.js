@@ -1,17 +1,15 @@
 /* global Chart */
 var username = document.getElementById('username').textContent;
-fetch('/json/history/' + username)
+// Encode the username: names may contain spaces or other characters that
+// would otherwise change the meaning of the request path.
+fetch('/json/history/' + encodeURIComponent(username))
     .then(response => response.json())
     .then(function(result) {
-        // A user who has not done any task yet: the JSON is an empty array,
-        // result[0] is undefined and there is nothing to chart - show a hint
-        // in place of the canvas instead.
+        // A user who has not done any task yet: the JSON is an empty array
+        // and there is nothing to chart. The table above already shows
+        // "No tasks completed yet.", so just leave the canvas unrendered
+        // (a bare <canvas> is invisible).
         if (!result.length) {
-            var canvas = document.getElementById('historyUserChart');
-            var msg = document.createElement('p');
-            msg.className = 'text-muted';
-            msg.textContent = 'No tasks completed yet.';
-            canvas.parentNode.replaceChild(msg, canvas);
             return;
         }
         // Chart.js v4 time scales want {x, y} data points (v2 could also use a

@@ -11,22 +11,22 @@ Run from the repository root:
     .venv/bin/python -m pytest test -q      (POSIX)
 """
 
-import pathlib
+import os
 import re
 
 import pytest
 
-REPO_ROOT = pathlib.Path(__file__).resolve().parent.parent
-DB_FILE = REPO_ROOT / "chaoswg.sqlite"
-
 
 @pytest.fixture(scope="session")
-def app():
-    # Start from a fresh database for every test session
-    for suffix in ("", "-wal", "-shm"):
-        p = DB_FILE.with_name(DB_FILE.name + suffix)
-        if p.exists():
-            p.unlink()
+def app(tmp_path_factory):
+    # Use a throwaway database in pytest's tmp directory so running the
+    # tests never touches (let alone deletes) the developer's real
+    # chaoswg.sqlite. The environment variable must be set before
+    # importing chaoswg: the app and the database are created at import
+    # time (default-config.py reads CHAOUSWG_DATABASE).
+    os.environ["CHAOUSWG_DATABASE"] = str(
+        tmp_path_factory.mktemp("chaoswg-db") / "chaoswg.sqlite"
+    )
 
     import chaoswg
     return chaoswg.app

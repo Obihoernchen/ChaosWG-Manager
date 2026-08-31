@@ -1,13 +1,17 @@
-from datetime import datetime
+import os
+import runpy
+import sys
+from datetime import datetime, timezone
 
-from flask import Flask, render_template, request, redirect, jsonify
+from flask import Flask, render_template, request, redirect, jsonify, make_response, send_file
+from flask.json.provider import DefaultJSONProvider
 from flask_babel import Babel
-from flask_bootstrap import Bootstrap, WebCDN
+from flask_bootstrap import Bootstrap5
 from flask_login import LoginManager, login_user, logout_user, login_required, current_user
 
 from chaoswg.admin import init_admin
 from chaoswg.forms import RegisterForm, LoginForm, CreateTaskForm, CustomTaskForm
-from chaoswg.helpers import format_datetime_custom, format_timedelta_custom
+from chaoswg.helpers import format_datetime_custom, format_timedelta_custom, utcnow
 from chaoswg.models import init_database, create_tables, User, Task, History
 from chaoswg.scheduler import TaskScheduler
 
@@ -15,10 +19,57 @@ from chaoswg.scheduler import TaskScheduler
 
 # init app and load config
 app = Flask(__name__)
+
+
+class UtcJsonProvider(DefaultJSONProvider):
+    """
+    jsonify() fallback for datetimes read from SQLite.
+
+    Legacy rows and rows written through forms come back from peewee as
+    naive datetimes, but they are stored as UTC, so http_date() would
+    mislabel their UTC offset. Treat naive as UTC (app-written values
+    are already aware and pass through unchanged).
+    """
+
+    @staticmethod
+    def default(o):
+        if isinstance(o, datetime) and o.tzinfo is None:
+            o = o.replace(tzinfo=timezone.utc)
+        return DefaultJSONProvider.default(o)
+
+
+app.json = UtcJsonProvider(app)
 # read ../default-config.py
 app.config.from_pyfile('../default-config.py')
 # overwrite with custom config in ../custom-config.py
 app.config.from_pyfile('../custom-config.py', silent=True)
+
+# Flask-WTF 1.x signs CSRF tokens with SECRET_KEY, exactly like the session
+# and "remember me" cookies, so the default key shipped in
+# default-config.py is more than a bad habit: anyone who has read the public
+# repository can forge CSRF tokens and login cookies. default-config.py is
+# re-executed below (the dash in the filename makes it non-importable), so
+# this check stays correct even if the default key is ever rotated.
+def _secret_key_is_default(app, config_path):
+    try:
+        default_config = runpy.run_path(config_path, run_name='__secret_key_check__')
+    except OSError:
+        return False
+    return app.config.get('SECRET_KEY') == default_config.get('SECRET_KEY')
+
+
+if _secret_key_is_default(app, os.path.join(app.root_path, os.pardir, 'default-config.py')):
+    banner = "\n".join([
+        "!" * 70,
+        "INSECURE CONFIG: SECRET_KEY is still the default from default-config.py.",
+        "Session cookies and CSRF tokens are signed with this key, so they",
+        "can be forged by anyone who has read the public repository.",
+        "Generate a random key and set SECRET_KEY in custom-config.py!",
+        "!" * 70,
+    ])
+    banner += "\n"
+    app.logger.warning(banner)
+    print(banner, file=sys.stderr)
 
 # init DB
 database = init_database(app)
@@ -30,12 +81,9 @@ create_tables()
 login_manager = LoginManager()
 login_manager.init_app(app)
 
-# Enable bootstrap support
-Bootstrap(app)
-# jQuery 3 instead of 1
-app.extensions['bootstrap']['cdns']['jquery'] = WebCDN(
-    '//cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/'
-)
+# Enable bootstrap 5 support (Bootstrap-Flask 2.x; CSS/JS from CDN by default,
+# no jQuery)
+Bootstrap5(app)
 
 # Enable babel support
 app.babel = Babel(app, default_timezone='Europe/Berlin')
@@ -46,14 +94,21 @@ app.jinja_env.filters['timedelta'] = format_timedelta_custom
 # init admin interface
 init_admin(app)
 
-# Create the task scheduler thread
+# Create the task scheduler. Do NOT start it here: this module is imported
+# once per process, and under the Werkzeug reloader (debug=True) that
+# happens in both the parent (watchdog) process and the child that serves
+# requests - app.debug is not set yet at import time, so an import-time
+# guard cannot tell them apart. The entry points start it: run.py only in
+# the reloader's child process (WERKZEUG_RUN_MAIN), chaoswg.wsgi in every
+# production process.
 task_scheduler = TaskScheduler()
 
 
-@app.before_first_request
-def start_task_scheduler():
-    # Start the task scheduler thread only once even if app is in debug mode
-    task_scheduler.start()
+@app.route('/favicon.ico')
+def favicon():
+    # Browsers probe /favicon.ico at the root even when the templates link
+    # the icon from /static/ico/ (the admin area does not link it at all).
+    return send_file(os.path.join(app.static_folder, 'ico', 'favicon.ico'))
 
 
 @app.route('/')
@@ -68,13 +123,13 @@ def register():
     if form.validate_on_submit():
         if app.config['INVITE_KEY'] != form.invite_key.data:
             # TODO return error message, wrong invite key
-            return '', 403
+            return make_response('', 403)
         if User.register(form.name.data, form.password.data):
             # TODO return success message
             return redirect('/login')
         else:
             # TODO return error message, user exists
-            return '', 403
+            return make_response('', 403)
 
     return render_template('register.html', form=form)
 
@@ -94,7 +149,14 @@ def login():
 
 @login_manager.user_loader
 def load_user(user_id):
-    return User.get(User.id == user_id)
+    # A stale "remember me" cookie may point at a user that no longer
+    # exists in the database (or at a non-numeric id). Returning
+    # None (anonymous) keeps the site usable instead of raising
+    # UserDoesNotExist and 500ing every page until the cookie is cleared.
+    try:
+        return User.get_by_id(int(user_id))
+    except (User.DoesNotExist, ValueError):
+        return None
 
 
 @login_manager.unauthorized_handler
@@ -143,7 +205,7 @@ def create_task():
                                                                           'schedule_days': form.schedule_days.data})
         if not created:
             # TODO return error message, task exists
-            return '', 403
+            return make_response('', 403)
 
         # TODO return success message
         return redirect('/tasks')
@@ -172,10 +234,11 @@ def get_tasks():
     todo = [t for t in tasks if t.state == Task.TODO]
     done = [t for t in tasks if t.state == Task.DONE]
 
+    total = len(tasks)
     progress = {
-        'backlog': len(backlog) / len(tasks) * 100,
-        'todo': len(todo) / len(tasks) * 100,
-        'done': len(done) / len(tasks) * 100
+        'backlog': len(backlog) / total * 100 if total else 0,
+        'todo': len(todo) / total * 100 if total else 0,
+        'done': len(done) / total * 100 if total else 0
     }
 
     return render_template('tasks.html', backlog=backlog, todo=todo, done=done, progress=progress,
@@ -192,9 +255,9 @@ def set_task_state():
         Task.set_state(task_id, state, user_id)
     else:
         # TODO message
-        return '', 403
+        return make_response('', 403)
     # New state was set
-    return '', 204
+    return make_response('', 204)
 
 
 #########################
@@ -233,7 +296,7 @@ def get_history_json():
     # same point count till today
     for user in result:
         result[user].append({
-            'time': datetime.utcnow(),
+            'time': utcnow(),
             'points': 0
         })
 

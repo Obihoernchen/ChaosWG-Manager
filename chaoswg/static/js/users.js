@@ -1,40 +1,41 @@
-/* global $ */
 /* global Chart */
-$.getJSON('/json/users', function(result) {
-    // prepare data
-    var users = [];
-    var points = [];
-    result.forEach(function(user) {
-        users.push(user.username);
-        points.push(user.points);
-    });
+fetch('/json/users')
+    .then(response => response.json())
+    .then(function(result) {
+        // prepare data
+        var users = [];
+        var points = [];
+        result.forEach(function(user) {
+            users.push(user.username);
+            points.push(user.points);
+        });
 
-    var ctx = document.getElementById('userChart').getContext('2d');
-    window.chart = new Chart(ctx, {
-        type: 'bar',
-        data: {
-            labels: users,
-            datasets: [{
-                label: "Points",
-                backgroundColor: 'rgba(51, 122, 183, 0.7)',
-                borderColor: 'rgba(51, 122, 183, 1)',
-                data: points
-            }]
-        },
-        options: {
-            animation: {
-                duration: 3000
+        var ctx = document.getElementById('userChart').getContext('2d');
+        window.chart = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: users,
+                datasets: [{
+                    label: "Points",
+                    backgroundColor: 'rgba(51, 122, 183, 0.7)',
+                    borderColor: 'rgba(51, 122, 183, 1)',
+                    data: points
+                }]
             },
-            legend: {
-                display: false
-            },
-            scales: {
-                yAxes: [{
-                    ticks: {
+            options: {
+                animation: {
+                    duration: 3000
+                },
+                legend: {
+                    display: false
+                },
+                scales: {
+                    // v3+: named scale objects (x/y) instead of xAxes/yAxes
+                    // arrays; beginAtZero moved from ticks to the scale level
+                    y: {
                         beginAtZero: true
                     }
-                }]
+                }
             }
-        }
+        });
     });
-});

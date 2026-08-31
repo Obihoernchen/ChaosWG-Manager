@@ -3,7 +3,7 @@ body {
     padding-bottom: 20px;
 }
 
-.popover-title .close{
+.popover-header .btn-close{
     position: relative;
     bottom: 3px;
 }

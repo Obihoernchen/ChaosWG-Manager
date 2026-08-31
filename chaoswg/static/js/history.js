@@ -1,4 +1,3 @@
-/* global $ */
 /* global Chart */
 var config = {
     type: 'scatter',
@@ -6,16 +5,19 @@ var config = {
         datasets: []
     },
     options: {
-        showLines: true,
+        // Chart.js v3+ renamed the v2 scatter option showLines to showLine
+        showLine: true,
         animation: {
             duration: 3000
         },
         scales: {
-            xAxes: [{
+            // v3+ uses named scale objects (x/y) instead of xAxes/yAxes arrays;
+            // scaleLabel became title
+            x: {
                 type: 'time',
-                scaleLabel: {
+                title: {
                     display: true,
-                    labelString: 'Date'
+                    text: 'Date'
                 },
                 time: {
                     unit: 'day',
@@ -23,16 +25,14 @@ var config = {
                         day: 'DD.MM.YY'
                     }
                 }
-            }],
-            yAxes: [{
-                scaleLabel: {
+            },
+            y: {
+                title: {
                     display: true,
-                    labelString: 'Points'
+                    text: 'Points'
                 },
-                ticks: {
-                    beginAtZero: true
-                }
-            }]
+                beginAtZero: true
+            }
         }
     }
 };
@@ -48,38 +48,41 @@ var chartColors = [
     'rgb(201, 203, 207)'
 ];
 
-$.getJSON('/json/history', function(result) {
-    // prepare data
-    var points = [];
-    var point_sum = 0;
-    for (var user in result) {
-        if (result.hasOwnProperty(user)) {
-            result[user].forEach(function(hist) {
-                point_sum += hist.points;
-                points.push({
-                    x: hist.time,
-                    y: point_sum
+fetch('/json/history')
+    .then(response => response.json())
+    .then(function(result) {
+        // prepare data
+        var points = [];
+        var point_sum = 0;
+        for (var user in result) {
+            if (result.hasOwnProperty(user)) {
+                result[user].forEach(function(hist) {
+                    point_sum += hist.points;
+                    points.push({
+                        x: hist.time,
+                        y: point_sum
+                    });
                 });
-            });
 
-            var color = chartColors[config.data.datasets.length % chartColors.length];
+                var color = chartColors[config.data.datasets.length % chartColors.length];
 
-            var dataset = {
-                label: user,
-                borderColor: color,
-                backgroundColor: color,
-                data: points,
-                fill: false,
-                steppedLine: true
-            };
-            config.data.datasets.push(dataset);
+                var dataset = {
+                    label: user,
+                    borderColor: color,
+                    backgroundColor: color,
+                    data: points,
+                    fill: false,
+                    // v3+ renamed the v2 dataset option steppedLine to stepped
+                    stepped: true
+                };
+                config.data.datasets.push(dataset);
 
-            // reset for next iteration
-            points = [];
-            point_sum = 0;
+                // reset for next iteration
+                points = [];
+                point_sum = 0;
+            }
         }
-    }
 
-    var ctx = document.getElementById('historyChart').getContext('2d');
-    window.chart = new Chart(ctx, config);
-});
+        var ctx = document.getElementById('historyChart').getContext('2d');
+        window.chart = new Chart(ctx, config);
+    });

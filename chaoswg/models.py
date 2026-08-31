@@ -1,9 +1,9 @@
-from datetime import datetime
-
 from peewee import (CharField, IntegerField, DateTimeField, SmallIntegerField, ForeignKeyField,
                     FloatField, DoesNotExist, SqliteDatabase)
 from playhouse.flask_utils import FlaskDB
 from werkzeug.security import generate_password_hash, check_password_hash
+
+from chaoswg.helpers import make_aware, utcnow
 
 db_wrapper = FlaskDB()
 
@@ -30,7 +30,7 @@ class User(ModelBase):
     username = CharField(unique=True)
     password = CharField()
     points = IntegerField(default=0)
-    last_update = DateTimeField(default=datetime.utcnow)
+    last_update = DateTimeField(default=utcnow)
 
     @classmethod
     def get_all(cls):
@@ -110,9 +110,9 @@ class Task(ModelBase):
         Calculate real point value based on time_factor.
         :return:
         """
-        now = datetime.utcnow()
+        now = utcnow()
         # set last_time to now if todo_time is not set.
-        last_time = now if not self.todo_time else self.todo_time
+        last_time = now if not self.todo_time else make_aware(self.todo_time)
         real_points = self.base_points + (self.time_factor * (now - last_time).days)
         return int(real_points)
 
@@ -127,7 +127,7 @@ class Task(ModelBase):
 
     @classmethod
     def set_state(cls, task_id, state, user_id):
-        now = datetime.utcnow()
+        now = utcnow()
         points_obtained = 0
         with db_wrapper.database.atomic():
             # update task state and time
@@ -153,7 +153,7 @@ class Task(ModelBase):
 
     @classmethod
     def set_todo(cls, task_id):
-        now = datetime.utcnow()
+        now = utcnow()
         with db_wrapper.database.atomic():
             task = cls.get(cls.id == task_id)
             task.state = cls.TODO
@@ -168,7 +168,7 @@ class Task(ModelBase):
 
     @staticmethod
     def do_custom_task(task, points, user_id):
-        now = datetime.utcnow()
+        now = utcnow()
         with db_wrapper.database.atomic():
             # update user points
             User.update(points=User.points + points, last_update=now).where(User.id == user_id).execute()
@@ -180,7 +180,8 @@ class History(ModelBase):
     task = CharField()
     user = ForeignKeyField(User)
     points = SmallIntegerField()
-    time = DateTimeField(index=True, default=datetime.utcnow())
+    # default is the callable, not the result of a call at import time
+    time = DateTimeField(index=True, default=utcnow)
 
     @classmethod
     def get_user_history(cls, user):

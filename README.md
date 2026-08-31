@@ -3,18 +3,23 @@
 
 ChaosWG-Manager is a living community planner.
 
-It's a python3 WSGI app built with Flask, Peewee and Bootstrap.
+It's a Python 3 WSGI app built with Flask 3, Peewee 4 and Bootstrap 5
+(via [Bootstrap-Flask](https://github.com/greyli/bootstrap-flask)).
 
-
-![Screenshot](https://cdn.rawgit.com/Obihoernchen/ChaosWG-Manager/855714eb/Screenshot.png)
+![Screenshot](Screenshot.png)
 
 ## Installation
 ### Requirements
-Install requirements with
+Python **3.10+** is required (the pinned flask-admin/WTForms/Flask-WTF
+releases do not support older interpreters). Use a virtualenv:
 ```
-pip3 install -r requirements.txt --upgrade --user
+python3 -m venv venv
+venv/bin/pip install -r requirements.txt
 ```
-or use a virtualenv.
+
+Note: `wtf-peewee` is a direct dependency on purpose — flask-admin's
+Peewee `ModelView` hard-imports it (there is no wtf-peewee-free admin
+backend).
 
 Afterwards you should create a `custom-config.py` file to overwrite the default secret keys of `config.py`.
 
@@ -34,7 +39,7 @@ WSGIScriptAlias / /srv/ChaosWG-Manager/chaoswg.wsgi
     Require all granted
 </Directory>
 ```
-For more information and other examples see: [Flask Documentation](http://flask.pocoo.org/docs/0.12/deploying/#self-hosted-options)
+For more information and other examples see: [Flask Documentation](https://flask.palletsprojects.com/en/stable/deploying/)
 
 ## TODO
 - use AJAX so we don't have to reload the whole page (single page with dynamic content)

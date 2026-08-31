@@ -1,10 +1,10 @@
 import threading
 import time
-from datetime import datetime
 
 import schedule
 
 from chaoswg import Task
+from chaoswg.helpers import make_aware, utcnow
 
 
 class TaskScheduler(threading.Thread):
@@ -18,12 +18,12 @@ class TaskScheduler(threading.Thread):
 
     @staticmethod
     def schedule_tasks():
-        now = datetime.utcnow()
+        now = utcnow()
         schedule_tasks = Task.get_schedule_tasks()
 
         for task in schedule_tasks:
             if task['last_done'] is not None:
-                delta = now - task['last_done']
+                delta = now - make_aware(task['last_done'])
                 if delta.days >= task['schedule_days']:
                     Task.set_todo(task['id'])
             else:
